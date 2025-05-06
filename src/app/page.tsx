@@ -11,69 +11,79 @@ export default function AboutPage() {
     {
       name: "Dorothy Lau",
       title: "Team Leader",
-      email: "ttdl20@bath.ac.uk",
+      email: "lemmesipcafe@gmail.com",
       responsibility: "Overall management and strategy",
     },
     {
       name: "Nicole Lee",
       title: "Assistant Team Leader",
-      email: "nhcl20@bath.ac.uk",
+      email: "lemmesipcafe@gmail.com",
       responsibility: "Operations and customer service",
     },
     {
       name: "Chloe Ho",
       title: "Publicity",
-      email: "pyh29@bath.ac.uk",
+      email: "lemmesipcafe@gmail.com",
       responsibility: "Marketing and social media",
     },
     {
       name: "Nicole Leung",
       title: "Treasurer",
-      email: "cwl70@bath.ac.uk",
+      email: "lemmesipcafe@gmail.com",
       responsibility: "Financial management and cash handling",
     },
     {
       name: "Oliver Ip",
       title: "Procurement",
-      email: "kni22@bath.ac.uk",
+      email: "lemmesipcafe@gmail.com",
       responsibility: "Inventory and supplier management",
     },
   ];
 
   return (
     <div className="bg-gradient-to-b from-[#2e5937] to-[#f8f5ea] min-h-screen">
-      {/* Hero section with parallax effect */}
+      {/* Hero section */}
       <div 
-        className="relative h-[100vh] flex items-center justify-center overflow-hidden"
+        className="pt-24 pb-16 flex items-center justify-center overflow-hidden bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/matcha.jpg')" }}
       >
-        <div className="text-center z-10 px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+        <div className="text-center z-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex justify-center mb-6"
+            className="mb-6"
           >
-            <Logo size="lg" isDark={true} />
+            <Image
+              src="/images/icon.png"
+              alt="Lemme Cafe Logo"
+              width={500}
+              height={500}
+              className="mx-auto mb-6"
+            />
           </motion.div>
+          
           <motion.p 
-            className="mt-5 max-w-xl mx-auto text-xl text-[#1a3328]"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            className="mt-5 max-w-xl mx-auto text-xl text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             A distinctive Japanese-inspired specialty drinks café, serving the Bath community for one day only.
           </motion.p>
+          
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
+            className="mt-8"
           >
             <a 
               href="/preorder" 
-              className="mt-8 inline-block bg-primary hover:bg-primary-light text-white font-bold py-3 px-6 rounded-md transition-colors duration-200"
-            >
+              className="inline-block bg-primary hover:bg-primary-light text-white font-bold py-3 px-8 rounded-md transition-colors duration-200"
+          >
               Pre-order Now
-            </a>
+          </a>
           </motion.div>
         </div>
       </div>

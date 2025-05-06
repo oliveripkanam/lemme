@@ -2,5 +2,5 @@ Images Needed:
 
 1. cafe-bg.jpg - A high-quality Japanese cafe background image for the hero section.
 2. lemme-logo.png - The Lemme cafe logo in the brand color (#2C5B43).
-
+ 
 Please replace these placeholders with actual image files. 

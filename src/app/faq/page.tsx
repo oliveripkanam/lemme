@@ -38,7 +38,7 @@ export default function FAQPage() {
     },
     {
       question: "Can I modify or cancel my pre-order?",
-      answer: "Yes, you can modify or cancel your pre-order up to 24 hours before the event. Please contact us at lemme@bath.ac.uk with your name and order details."
+      answer: "Yes, you can modify or cancel your pre-order up to 24 hours before the event. Please contact us at lemmesipcafe@gmail.com with your name and order details."
     },
     {
       question: "Do you cater to dietary requirements?",
@@ -77,10 +77,10 @@ export default function FAQPage() {
       <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-[#1a3328] sm:text-5xl sm:tracking-tight">
+            <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">
               FAQ & Terms
             </h1>
-            <p className="mt-5 max-w-xl mx-auto text-xl text-[#1a3328]">
+            <p className="mt-5 max-w-xl mx-auto text-xl text-white">
               Everything you need to know about Lemme Pop-up Café.
             </p>
           </div>
@@ -185,8 +185,8 @@ export default function FAQPage() {
                 </h3>
                 <p className="text-gray-700">
                   For any questions or concerns regarding these terms, please contact us at{" "}
-                  <a href="mailto:lemme@bath.ac.uk" className="text-primary hover:text-primary-dark">
-                    lemme@bath.ac.uk
+                  <a href="mailto:lemmesipcafe@gmail.com" className="text-primary hover:text-primary-dark">
+                    lemmesipcafe@gmail.com
                   </a>
                 </p>
               </div>

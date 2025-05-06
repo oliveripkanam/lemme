@@ -138,10 +138,10 @@ export default function PreorderPage() {
       <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-[#1a3328] sm:text-5xl sm:tracking-tight">
+            <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">
               Pre-order Your Drinks
             </h1>
-            <p className="mt-5 max-w-xl mx-auto text-xl text-[#1a3328]">
+            <p className="mt-5 max-w-xl mx-auto text-xl text-white">
               Skip the queue on June 3rd by pre-ordering your drinks for pickup.
             </p>
             <p className="mt-3 max-w-xl mx-auto text-lg text-primary font-medium">

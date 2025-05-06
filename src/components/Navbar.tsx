@@ -28,9 +28,7 @@ const Navbar = () => {
 
   return (
     <motion.header 
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-black/80 backdrop-blur-sm" : "bg-transparent"
-      }`}
+      className={`fixed w-full z-50 transition-all duration-300 bg-black`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}

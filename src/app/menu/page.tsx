@@ -115,10 +115,10 @@ export default function MenuPage() {
       {/* Hero Section */}
       <div className="h-[40vh] flex items-center justify-center text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-[#1a3328] sm:text-5xl sm:tracking-tight">
+          <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">
             Our Menu
           </h1>
-          <p className="mt-5 max-w-xl mx-auto text-xl text-[#1a3328]">
+          <p className="mt-5 max-w-xl mx-auto text-xl text-white">
             Japanese-inspired specialty drinks with simple, transparent pricing.
           </p>
         </div>
@@ -128,7 +128,7 @@ export default function MenuPage() {
       <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         {menuCategories.map((category, categoryIndex) => (
           <AnimatedSection key={category.id} delay={categoryIndex * 0.1} className="mb-16">
-            <h2 className="text-2xl font-bold text-[#1a3328] mb-6">
+            <h2 className="text-2xl font-bold text-white mb-6">
               {category.title} - {category.basePrice}
             </h2>
             
