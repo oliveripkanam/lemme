@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
-import Logo from "@/components/Logo";
 
 export default function AboutPage() {
   // Team members data

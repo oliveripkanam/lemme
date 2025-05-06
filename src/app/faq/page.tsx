@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Disclosure, Transition } from "@headlessui/react";
 import AnimatedSection from "@/components/AnimatedSection";
-import { motion } from "framer-motion";
 
 export default function FAQPage() {
   // FAQ items

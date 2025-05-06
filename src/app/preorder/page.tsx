@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import AnimatedSection from "@/components/AnimatedSection";
 import { motion } from "framer-motion";
 
@@ -67,7 +67,7 @@ export default function PreorderPage() {
   const [selectedDrinks, setSelectedDrinks] = useState<DrinkOption[]>(availableDrinks);
   const [orderSuccess, setOrderSuccess] = useState(false);
   
-  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
     const orderedDrinks = selectedDrinks.filter(drink => drink.quantity > 0);
@@ -188,7 +188,7 @@ export default function PreorderPage() {
                       }`}
                     />
                     <p className="mt-1 text-xs text-gray-500">
-                      We'll send you a reminder 1 day before the event.
+                      We&apos;ll send you a reminder 1 day before the event.
                     </p>
                     {errors.email && (
                       <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
