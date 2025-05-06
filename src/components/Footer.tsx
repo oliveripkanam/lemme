@@ -64,7 +64,14 @@ const Footer = () => {
               <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider mb-4">
                 Contact
               </h3>
-              <p className="text-gray-400 mb-2">Bath City Centre</p>
+              <a 
+                href="https://www.instagram.com/_lemme.sip_/#" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="block text-gray-400 hover:text-primary-light transition-colors duration-200 mb-2"
+              >
+                Instagram
+              </a>
               <p className="text-gray-400">contact@lemme-cafe.com</p>
             </motion.div>
           </div>

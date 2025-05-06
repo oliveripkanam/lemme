@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
+import { CubeTransparentIcon, ArrowPathRoundedSquareIcon, TicketIcon } from "@heroicons/react/24/outline";
 
 type MenuItem = {
   id: string;
@@ -110,57 +111,77 @@ export default function MenuPage() {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-[#2e5937] to-[#f8f5ea] min-h-screen">
-      {/* Hero Section */}
-      <div className="h-[40vh] flex items-center justify-center text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">
+    <div className="bg-gradient-to-b from-[#2e5937] to-[#f8f5ea] min-h-screen text-[#1a3328]">
+      {/* Hero Section with coffee.jpg background */}
+      <div 
+        className="h-[50vh] md:h-[60vh] flex items-center justify-center text-center pt-16 bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/images/coffee.jpg')" }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h1 
+            className="text-5xl font-bold text-white sm:text-6xl lg:text-7xl tracking-tight drop-shadow-md"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             Our Menu
-          </h1>
-          <p className="mt-5 max-w-xl mx-auto text-xl text-white">
+          </motion.h1>
+          <motion.p 
+            className="mt-6 max-w-xl mx-auto text-xl text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             Japanese-inspired specialty drinks with simple, transparent pricing.
-          </p>
+          </motion.p>
         </div>
       </div>
 
       {/* Menu Content */}
-      <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         {menuCategories.map((category, categoryIndex) => (
           <AnimatedSection key={category.id} delay={categoryIndex * 0.1} className="mb-16">
-            <h2 className="text-2xl font-bold text-white mb-6">
-              {category.title} - {category.basePrice}
+            <h2 className="text-3xl font-bold text-white mb-3 text-center">
+              {category.title}
             </h2>
+            <p className="text-center text-beige-light mb-8 text-lg">Base Price: {category.basePrice}</p>
             
             {category.id === "specialty-drinks" && (
-              <p className="text-primary font-medium mb-6">
-                Save 20p with pre-order!
+              <p className="text-center text-yellow-300 font-semibold mb-8 text-lg">
+                ✨ Pre-order specialty drinks & save 20p! ✨
               </p>
             )}
             
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {category.items.map((item) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {category.items.map((item, itemIndex) => (
                 <motion.div 
                   key={item.id} 
-                  className="bg-white rounded-md p-6 shadow-md border border-gray-200"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
+                  className="bg-white/10 backdrop-filter backdrop-blur-md p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between h-full"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: itemIndex * 0.05 + categoryIndex * 0.1, duration: 0.4 }}
                 >
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-medium text-[#1a3328]">{item.name}</h3>
-                    <div>
-                      {item.discountedPrice ? (
-                        <div className="flex flex-col items-end">
-                          <span className="line-through text-gray-500 text-sm">{item.price}</span>
-                          <span className="text-primary font-medium">{item.discountedPrice}</span>
-                        </div>
-                      ) : (
-                        <span className="text-primary font-medium">{item.price}</span>
-                      )}
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-semibold text-[#122e21] mr-2 truncate" title={item.name}>{item.name}</h3>
+                      <div>
+                        {item.discountedPrice ? (
+                          <div className="text-right">
+                            <span className="text-md line-through text-gray-500">{item.price}</span>
+                            <span className="block text-2xl font-bold text-primary-dark ml-2">{item.discountedPrice}</span>
+                          </div>
+                        ) : (
+                          <span className="block text-2xl font-bold text-primary-dark text-right">{item.price}</span>
+                        )}
+                      </div>
                     </div>
+                    
+                    {item.description && category.id === "specialty-drinks" && (
+                       <p className="text-xs text-yellow-500 mt-1 text-right font-medium">{item.description}</p>
+                    )}
                   </div>
-                  {item.description && (
-                    <p className="text-gray-600 text-sm mt-1">{item.description}</p>
-                  )}
                 </motion.div>
               ))}
             </div>
@@ -168,19 +189,19 @@ export default function MenuPage() {
         ))}
 
         {/* Additional Menu Notes */}
-        <AnimatedSection delay={0.3} className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
-          <h3 className="text-xl font-semibold text-[#1a3328] mb-4">Menu Notes</h3>
-          <ul className="space-y-2 text-gray-700">
+        <AnimatedSection delay={0.3} className="bg-white/10 backdrop-filter backdrop-blur-md p-8 rounded-xl shadow-xl mt-12">
+          <h3 className="text-2xl font-bold text-[#1a3328] mb-6 text-center">Good to Know</h3>
+          <ul className="space-y-4 text-beige-light text-lg">
             <li className="flex items-start">
-              <span className="text-primary mr-2">•</span>
+              <CubeTransparentIcon className="h-6 w-6 text-primary-light mr-3 flex-shrink-0" />
               <span>All drinks can be made with oat milk at no extra charge.</span>
             </li>
             <li className="flex items-start">
-              <span className="text-primary mr-2">•</span>
+              <ArrowPathRoundedSquareIcon className="h-6 w-6 text-primary-light mr-3 flex-shrink-0" />
               <span>Bring your own cup and get a 20p discount on any drink.</span>
             </li>
             <li className="flex items-start">
-              <span className="text-primary mr-2">•</span>
+              <TicketIcon className="h-6 w-6 text-primary-light mr-3 flex-shrink-0" />
               <span>Pre-order specialty drinks online and save 20p per drink.</span>
             </li>
           </ul>

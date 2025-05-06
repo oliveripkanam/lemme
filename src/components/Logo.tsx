@@ -25,7 +25,7 @@ const Logo = ({ size = "md", isDark = false }: LogoProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <span className={`${textSizeClasses[size]} tracking-widest uppercase ${textColor} font-semibold`}>
+      <span className={`${textSizeClasses[size]} tracking-widest uppercase ${textColor} font-semibold whitespace-nowrap`}>
         LEMME ONE DAY CAFE
       </span>
     </motion.div>

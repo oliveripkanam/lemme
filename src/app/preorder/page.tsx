@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import AnimatedSection from "@/components/AnimatedSection";
 import { motion } from "framer-motion";
+import { PlusIcon, MinusIcon } from "@heroicons/react/24/solid";
 
 type DrinkOption = {
   id: string;
@@ -67,7 +68,9 @@ export default function PreorderPage() {
   const [selectedDrinks, setSelectedDrinks] = useState<DrinkOption[]>(availableDrinks);
   const [orderSuccess, setOrderSuccess] = useState(false);
   
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormData>({
+    mode: "onChange"
+  });
 
   const onSubmit = (data: FormData) => {
     const orderedDrinks = selectedDrinks.filter(drink => drink.quantity > 0);
@@ -164,7 +167,7 @@ export default function PreorderPage() {
                       type="text"
                       id="name"
                       {...register("name", { required: "Name is required" })}
-                      className={`shadow-sm focus:ring-primary-light focus:border-primary-light block w-full sm:text-sm border-gray-300 bg-white text-gray-800 rounded-md ${
+                      className={`shadow-sm focus:ring-primary-light focus:border-primary-light block w-full sm:text-sm border-gray-300 bg-white text-gray-800 rounded-md py-3 px-4 ${
                         errors.name ? "border-red-500" : ""
                       }`}
                     />
@@ -183,7 +186,7 @@ export default function PreorderPage() {
                       type="email"
                       id="email"
                       {...register("email", { required: "Email is required" })}
-                      className={`shadow-sm focus:ring-primary-light focus:border-primary-light block w-full sm:text-sm border-gray-300 bg-white text-gray-800 rounded-md ${
+                      className={`shadow-sm focus:ring-primary-light focus:border-primary-light block w-full sm:text-sm border-gray-300 bg-white text-gray-800 rounded-md py-3 px-4 ${
                         errors.email ? "border-red-500" : ""
                       }`}
                     />
@@ -204,7 +207,7 @@ export default function PreorderPage() {
                     <select
                       id="pickupTime"
                       {...register("pickupTime", { required: "Pickup time is required" })}
-                      className={`shadow-sm focus:ring-primary-light focus:border-primary-light block w-full sm:text-sm border-gray-300 bg-white text-gray-800 rounded-md ${
+                      className={`shadow-sm focus:ring-primary-light focus:border-primary-light block w-full sm:text-sm border-gray-300 bg-white text-gray-800 rounded-md py-3 px-4 ${
                         errors.pickupTime ? "border-red-500" : ""
                       }`}
                     >
@@ -246,24 +249,27 @@ export default function PreorderPage() {
                             <button
                               type="button"
                               onClick={() => updateDrinkQuantity(drink.id, Math.max(0, drink.quantity - 1))}
-                              className="p-1 text-gray-600 hover:text-[#1a3328]"
+                              className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-1"
+                              aria-label={`Decrease quantity of ${drink.name}`}
                             >
-                              -
+                              <MinusIcon className="h-5 w-5" />
                             </button>
                             <input
                               type="number"
                               id={drink.id}
+                              aria-label={`Quantity for ${drink.name}`}
                               min="0"
                               value={drink.quantity}
                               onChange={(e) => updateDrinkQuantity(drink.id, parseInt(e.target.value) || 0)}
-                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md"
+                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm"
                             />
                             <button
                               type="button"
                               onClick={() => updateDrinkQuantity(drink.id, drink.quantity + 1)}
-                              className="p-1 text-gray-600 hover:text-[#1a3328]"
+                              className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-1"
+                              aria-label={`Increase quantity of ${drink.name}`}
                             >
-                              +
+                              <PlusIcon className="h-5 w-5" />
                             </button>
                           </div>
                         </div>
@@ -293,24 +299,27 @@ export default function PreorderPage() {
                             <button
                               type="button"
                               onClick={() => updateDrinkQuantity(drink.id, Math.max(0, drink.quantity - 1))}
-                              className="p-1 text-gray-600 hover:text-[#1a3328]"
+                              className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-1"
+                              aria-label={`Decrease quantity of ${drink.name}`}
                             >
-                              -
+                              <MinusIcon className="h-5 w-5" />
                             </button>
                             <input
                               type="number"
                               id={drink.id}
+                              aria-label={`Quantity for ${drink.name}`}
                               min="0"
                               value={drink.quantity}
                               onChange={(e) => updateDrinkQuantity(drink.id, parseInt(e.target.value) || 0)}
-                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md"
+                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm"
                             />
                             <button
                               type="button"
                               onClick={() => updateDrinkQuantity(drink.id, drink.quantity + 1)}
-                              className="p-1 text-gray-600 hover:text-[#1a3328]"
+                              className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-1"
+                              aria-label={`Increase quantity of ${drink.name}`}
                             >
-                              +
+                              <PlusIcon className="h-5 w-5" />
                             </button>
                           </div>
                         </div>
@@ -342,31 +351,38 @@ export default function PreorderPage() {
                             <button
                               type="button"
                               onClick={() => updateDrinkQuantity(drink.id, Math.max(0, drink.quantity - 1))}
-                              className="p-1 text-gray-600 hover:text-[#1a3328]"
+                              className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-1"
+                              aria-label={`Decrease quantity of ${drink.name}`}
                             >
-                              -
+                              <MinusIcon className="h-5 w-5" />
                             </button>
                             <input
                               type="number"
                               id={drink.id}
+                              aria-label={`Quantity for ${drink.name}`}
                               min="0"
                               value={drink.quantity}
                               onChange={(e) => updateDrinkQuantity(drink.id, parseInt(e.target.value) || 0)}
-                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md"
+                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm"
                             />
                             <button
                               type="button"
                               onClick={() => updateDrinkQuantity(drink.id, drink.quantity + 1)}
-                              className="p-1 text-gray-600 hover:text-[#1a3328]"
+                              className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-1"
+                              aria-label={`Increase quantity of ${drink.name}`}
                             >
-                              +
+                              <PlusIcon className="h-5 w-5" />
                             </button>
                           </div>
                         </div>
-                        <div className="text-sm mt-1 flex items-center">
-                          <span className="line-through text-gray-500 mr-2">{drink.price}</span>
-                          <span className="text-primary font-medium">{drink.discountedPrice}</span>
-                        </div>
+                        {drink.category === "specialtyDrinks" && drink.discountedPrice ? (
+                          <div className="text-sm mt-1 text-right">
+                            <span className="line-through text-gray-500 mr-2">{drink.price}</span>
+                            <span className="text-primary font-medium">{drink.discountedPrice}</span>
+                          </div>
+                        ) : (
+                          <div className="text-sm text-primary mt-1 text-right">{drink.price}</div>
+                        )}
                       </motion.div>
                     ))}
                 </div>
@@ -387,7 +403,8 @@ export default function PreorderPage() {
             <AnimatedSection delay={0.3} className="flex justify-end">
               <button
                 type="submit"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-black bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={!isValid || parseFloat(orderTotal) === 0}
               >
                 Place Pre-order
               </button>

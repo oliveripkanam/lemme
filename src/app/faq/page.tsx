@@ -87,29 +87,30 @@ export default function FAQPage() {
 
         {/* Tab Navigation */}
         <AnimatedSection delay={0.1}>
-          <div className="flex justify-center mb-8">
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setActiveTab("faq")}
-                className={`px-6 py-3 font-medium ${
-                  activeTab === "faq"
-                    ? "bg-primary-light text-white"
-                    : "text-gray-700 hover:text-white bg-white hover:bg-opacity-80"
-                }`}
-              >
-                FAQ
-              </button>
-              <button
-                onClick={() => setActiveTab("terms")}
-                className={`px-6 py-3 font-medium ${
-                  activeTab === "terms"
-                    ? "bg-primary-light text-white"
-                    : "text-gray-700 hover:text-white bg-white hover:bg-opacity-80"
-                }`}
-              >
-                Terms & Conditions
-              </button>
-            </div>
+          {/* Container for two separate buttons */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
+            {/* FAQ Button */}
+            <button
+              onClick={() => setActiveTab("faq")}
+              className={`w-full sm:w-auto bg-primary rounded-lg px-8 py-3 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-dark ${ 
+                activeTab === "faq"
+                  ? "text-white font-semibold border-2 border-white scale-105"
+                  : "text-beige-light/80 hover:text-beige-light border-2 border-beige-light"
+              }`}
+            >
+              FAQ
+            </button>
+            {/* Terms & Conditions Button */}
+            <button
+              onClick={() => setActiveTab("terms")}
+              className={`w-full sm:w-auto bg-primary rounded-lg px-8 py-3 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-dark ${ 
+                activeTab === "terms"
+                  ? "text-white font-semibold border-2 border-white scale-105"
+                  : "text-beige-light/80 hover:text-beige-light border-2 border-beige-light"
+              }`}
+            >
+              Terms & Conditions
+            </button>
           </div>
         </AnimatedSection>
 
@@ -163,28 +164,28 @@ export default function FAQPage() {
         {/* Terms & Conditions Section */}
         {activeTab === "terms" && (
           <AnimatedSection delay={0.2} className="max-w-4xl mx-auto">
-            <div className="bg-white p-8 rounded-lg border border-gray-200">
-              <h2 className="text-xl font-semibold text-[#1a3328] mb-6">
+            <div className="bg-white/10 backdrop-filter backdrop-blur-sm p-8 rounded-xl shadow-xl border border-white/20">
+              <h2 className="text-2xl font-bold text-white mb-6 text-center">
                 Terms and Conditions
               </h2>
               <div className="space-y-6">
                 {termsAndConditions.map((term, index) => (
                   <div key={index}>
-                    <h3 className="text-lg font-medium text-[#1a3328] mb-2">
+                    <h3 className="text-lg font-semibold text-primary-light mb-2">
                       {term.title}
                     </h3>
-                    <p className="text-gray-700">{term.content}</p>
+                    <p className="text-beige-light">{term.content}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-300">
-                <h3 className="text-lg font-medium text-[#1a3328] mb-2">
+              <div className="mt-8 pt-6 border-t border-white/30">
+                <h3 className="text-lg font-semibold text-primary-light mb-2">
                   Contact Information
                 </h3>
-                <p className="text-gray-700">
+                <p className="text-beige-light">
                   For any questions or concerns regarding these terms, please contact us at{" "}
-                  <a href="mailto:lemmesipcafe@gmail.com" className="text-primary hover:text-primary-dark">
+                  <a href="mailto:lemmesipcafe@gmail.com" className="text-primary-light hover:text-white underline">
                     lemmesipcafe@gmail.com
                   </a>
                 </p>
