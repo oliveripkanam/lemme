@@ -25,16 +25,18 @@ export async function POST(request: Request) {
 
   // Copy all received fields, filtering out undefined
   for (const key in formDataObject) {
-    if (Object.prototype.hasOwnProperty.call(formDataObject, key)) {
-      const value = (formDataObject as any)[key]; // Use any temporarily for simplicity here
+    // Ensure the key is actually a property of the object and part of our defined type
+    if (Object.prototype.hasOwnProperty.call(formDataObject, key) && key !== 'form-name') { // Exclude form-name here, we set it manually
+      const typedKey = key as keyof ContactFormData; // Assert key is one of the keys of ContactFormData
+      const value = formDataObject[typedKey];
       if (value !== undefined && value !== null) {
-          netlifyPayloadData[key] = String(value);
+          netlifyPayloadData[typedKey] = String(value);
       }
     }
   }
   
-  // Ensure form-name is set (use received value or default)
-  netlifyPayloadData['form-name'] = formDataObject['form-name'] || 'contact'; 
+  // Ensure form-name is set
+  netlifyPayloadData['form-name'] = 'contact'; 
 
   // Optional: Remove honeypot field if it exists and is empty (or handle as needed)
   // if (netlifyPayloadData['bot-field'] === '') {
