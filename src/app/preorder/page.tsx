@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import AnimatedSection from "@/components/AnimatedSection";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusIcon, MinusIcon, XMarkIcon, ShoppingCartIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, MinusIcon, XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/solid";
 import { supabase } from "@/lib/supabaseClient";
 
 const OAT_MILK_COST = 0.40;
@@ -218,8 +218,9 @@ export default function PreorderPage() {
       setOrderSuccess(true);
       reset(); 
       setCartItems([]);
-    } catch (error: any) {
-      setSubmitError(`Failed to submit order: ${error.message || 'Please try again.'}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setSubmitError(`Failed to submit order: ${message}`);
     } finally {
       setIsSubmitting(false);
     }

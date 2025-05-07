@@ -95,9 +95,10 @@ export default function AdminPage() {
         if (error) throw error;
         
         setOrders(data as PreOrder[] || []);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching orders:", err);
-        setFetchError(`Failed to fetch orders: ${err.message}`);
+        const message = err instanceof Error ? err.message : String(err);
+        setFetchError(`Failed to fetch orders: ${message}`);
         setOrders([]);
       } finally {
         setIsLoading(false);
@@ -153,9 +154,10 @@ export default function AdminPage() {
           order.id === orderId ? { ...order, is_collected: !currentStatus } : order
         )
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error updating order status:", err);
-      alert(`Failed to update order: ${err.message}`);
+      const message = err instanceof Error ? err.message : String(err);
+      alert(`Failed to update order: ${message}`);
     } finally {
       setShowConfirmModal(false);
       setOrderToConfirm(null);
@@ -291,7 +293,7 @@ export default function AdminPage() {
                   exit={{ opacity: 0 }}
                   className="text-center py-8 text-gray-600"
                 >
-                  No orders found matching "{searchTerm}".
+                  No orders found matching &quot;{searchTerm}&quot;.
                 </motion.div>
               )}
               {filteredOrders.length === 0 && !searchTerm && !isLoading && (

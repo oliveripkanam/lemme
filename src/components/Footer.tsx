@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { PhoneIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
-import Logo from './Logo'; // Assuming Logo component is in the same directory or adjust path
 
 const Footer = () => {
   const footerLinks = [

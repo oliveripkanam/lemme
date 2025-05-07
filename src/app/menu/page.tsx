@@ -10,6 +10,8 @@ type MenuItem = {
   price: string;
   discountedPrice?: string;
   description?: string;
+  isSpecialty?: boolean;
+  originalPrice?: string;
 };
 
 export default function MenuPage() {
@@ -48,63 +50,81 @@ export default function MenuPage() {
           name: "Matcha (Hot)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "matcha-iced", 
           name: "Matcha (Iced)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "hojicha-hot", 
           name: "Hojicha (Hot)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "hojicha-iced", 
           name: "Hojicha (Iced)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "iced-lemon-tea", 
           name: "Iced Lemon Tea", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "yuzu-tea-hot", 
           name: "Yuzu Tea (Hot)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "yuzu-tea-iced", 
           name: "Yuzu Tea (Iced)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "genmaicha-hot", 
           name: "Genmaicha (Hot)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
         { 
           id: "genmaicha-iced", 
           name: "Genmaicha (Iced)", 
           price: "£4.00", 
           discountedPrice: "£3.80",
-          description: "Save 20p with pre-order!"
+          description: "Save 20p with pre-order!",
+          isSpecialty: true,
+          originalPrice: "£4.00"
         },
       ] as MenuItem[]
     }
@@ -196,6 +216,17 @@ export default function MenuPage() {
                        <p className="text-xs text-yellow-500 mt-1 text-right font-medium">{item.description}</p>
                     )}
                   </div>
+                  <div className="mt-auto">
+                    <p className="text-lg font-bold text-primary mt-2 text-right">
+                      {item.price}
+                      {item.isSpecialty && item.originalPrice && (
+                        <span className="text-sm line-through text-gray-500 ml-2">{item.originalPrice}</span>
+                      )}
+                    </p>
+                    {item.isSpecialty && (
+                       <p className="text-xs text-primary-dark text-right mt-0.5">Pre-order for 20p off!</p>
+                    )}
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -216,7 +247,7 @@ export default function MenuPage() {
             </li>
             <li className="flex items-start">
               <TicketIcon className="h-6 w-6 text-primary-light mr-3 flex-shrink-0 mt-1" />
-              <span>Pre-order your favorite specialty drinks online to save 20p and ensure it's freshly prepared and ready for you.</span>
+              <span>Pre-order your favorite specialty drinks online to save 20p and ensure it&apos;s freshly prepared and ready for you.</span>
             </li>
           </ul>
         </AnimatedSection>
