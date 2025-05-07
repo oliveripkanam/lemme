@@ -51,7 +51,7 @@ exports.handler = async function(event, context) {
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
-  const mailersend = new MailerSend({ api_key: mailersendApiKey });
+  const mailersend = new MailerSend({ apiKey: mailersendApiKey });
 
   try {
     // 1. Fetch order details from Supabase
