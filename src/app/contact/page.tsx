@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, ChangeEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import AnimatedSection from '@/components/AnimatedSection';
 
