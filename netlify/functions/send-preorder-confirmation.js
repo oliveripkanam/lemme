@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const { MailerSend, EmailParams, Sender, Recipient, Personalization } = require('mailersend');
+const { MailerSend, EmailParams, Sender, Recipient } = require('mailersend');
 
 // Helper function to format drinks from the Supabase JSON
 function formatDrinks(drinksJson) {
@@ -84,20 +84,23 @@ exports.handler = async function(event, context) {
     const sender = new Sender(mailersendSenderEmail, mailersendSenderName);
     const recipients = [new Recipient(customerEmail, customerName || 'Valued Customer')];
     
-    // Updated way to set template variables/personalization
-    const personalization = [
-      new Personalization(customerEmail, { // Target recipient's email
-        "name": customerName || 'there',      // Template variable {{name}}
-        "drinks": formattedDrinks,           // Template variable {{drinks}}
-        "pickup_time": pickupTime            // Template variable {{pickup_time}}
-      })
+    // Updated way to set template variables/personalization using plain objects
+    const personalizationData = [
+      {
+        email: customerEmail, // Target recipient's email
+        data: {
+          "name": customerName || 'there',      // Template variable {{name}}
+          "drinks": formattedDrinks,           // Template variable {{drinks}}
+          "pickup_time": pickupTime            // Template variable {{pickup_time}}
+        }
+      }
     ];
 
     const emailParams = new EmailParams()
       .setFrom(sender)
       .setTo(recipients)
       .setTemplateId(mailersendTemplateId)
-      .setPersonalization(personalization); // Use setPersonalization instead of setVariables
+      .setPersonalization(personalizationData); // Pass the array of plain objects
 
     // 4. Send email
     await mailersend.email.send(emailParams);
