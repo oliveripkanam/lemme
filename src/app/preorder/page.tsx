@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import AnimatedSection from "@/components/AnimatedSection";
 import { motion } from "framer-motion";
 import { PlusIcon, MinusIcon } from "@heroicons/react/24/solid";
+import { supabase } from "@/lib/supabaseClient";
 
 type DrinkOption = {
   id: string;
@@ -67,29 +68,65 @@ export default function PreorderPage() {
 
   const [selectedDrinks, setSelectedDrinks] = useState<DrinkOption[]>(availableDrinks);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   
-  const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors, isValid }, reset } = useForm<FormData>({
     mode: "onChange"
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
     const orderedDrinks = selectedDrinks.filter(drink => drink.quantity > 0);
-    const orderData = {
-      ...data,
-      drinks: orderedDrinks,
-      orderDate: new Date().toISOString(),
-      totalPrice: orderedDrinks.reduce((total, drink) => {
-        // Use discounted price for specialty drinks if available
+    
+    if (orderedDrinks.length === 0) {
+      setSubmitError("Please select at least one drink.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const currentOrderTotal = orderedDrinks.reduce((total, drink) => {
         const price = drink.category === "specialtyDrinks" && drink.discountedPrice
           ? parseFloat(drink.discountedPrice.replace('£', ''))
           : parseFloat(drink.price.replace('£', ''));
-          
         return total + (price * drink.quantity);
-      }, 0).toFixed(2)
+      }, 0);
+
+    const orderDataForSupabase = {
+      name: data.name,
+      email: data.email,
+      pickup_time: data.pickupTime,
+      drinks: orderedDrinks.map(d => ({
+        id: d.id, 
+        name: d.name, 
+        quantity: d.quantity, 
+        price: d.price, 
+        discountedPrice: d.discountedPrice 
+      })),
+      total_price: parseFloat(currentOrderTotal.toFixed(2)),
     };
     
-    console.log('Order submitted:', orderData);
-    setOrderSuccess(true);
+    try {
+      const { error } = await supabase
+        .from('preorders')
+        .insert([orderDataForSupabase]);
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('Order submitted successfully to Supabase:', orderDataForSupabase);
+      setOrderSuccess(true);
+      reset();
+      setSelectedDrinks(availableDrinks.map(d => ({...d, quantity: 0})));
+    } catch (error: any) {
+      console.error('Error submitting order to Supabase:', error);
+      setSubmitError(`Failed to submit order: ${error.message || 'Please try again.'}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateDrinkQuantity = (id: string, quantity: number) => {
@@ -117,20 +154,29 @@ export default function PreorderPage() {
 
   if (orderSuccess) {
     return (
-      <div className="bg-gradient-to-b from-[#2e5937] to-[#f8f5ea] py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl font-bold text-[#1a3328]">Pre-order Successful!</h1>
-          <div className="mt-4 bg-white p-6 rounded-lg border border-gray-200">
-            <p className="text-lg text-gray-700">
-              Thank you for your pre-order. We look forward to seeing you on June 3rd!
-            </p>
-            <button 
-              onClick={() => setOrderSuccess(false)}
-              className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-light hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-            >
-              Place Another Order
-            </button>
-          </div>
+      <div className="bg-gradient-to-b from-[#2e5937] to-[#f8f5ea] py-16 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center bg-white p-8 rounded-xl shadow-2xl">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <svg className="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1a3328] mt-4">Pre-order Successful!</h1>
+            <div className="mt-4">
+              <p className="text-base sm:text-lg text-gray-700">
+                Thank you for your pre-order. We look forward to seeing you on June 3rd!
+              </p>
+              <button 
+                onClick={() => {
+                  setOrderSuccess(false);
+                }}
+                className="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-300"
+              >
+                Place Another Order
+              </button>
+            </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -401,13 +447,32 @@ export default function PreorderPage() {
               </div>
             </AnimatedSection>
 
-            <AnimatedSection delay={0.3} className="flex justify-end">
+            <AnimatedSection delay={0.3} className="flex flex-col items-end space-y-4">
+              {submitError && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="w-full p-3 mb-4 text-sm text-red-700 bg-red-100 border border-red-300 rounded-md text-center"
+                >
+                  {submitError}
+                </motion.div>
+              )}
               <button
                 type="submit"
                 className="inline-flex items-center px-6 py-2 sm:px-8 sm:py-3 border border-gray-300 text-base font-semibold rounded-lg shadow-sm text-black bg-white hover:bg-beige-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 transform hover:scale-105"
-                disabled={!isValid || parseFloat(orderTotal) === 0}
+                disabled={!isValid || parseFloat(orderTotal) === 0 || isSubmitting}
               >
-                Place Pre-order
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Submitting...
+                  </>
+                ) : (
+                  'Place Pre-order'
+                )}
               </button>
             </AnimatedSection>
           </form>

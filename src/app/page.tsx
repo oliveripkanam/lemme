@@ -59,33 +59,33 @@ export default function AboutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
               >
-                <Image
+        <Image
                   src="/images/icon.png"
                   alt="Lemme Cafe Logo"
                   width={420}
                   height={420}
                   className="mx-auto md:mx-0"
-                  priority
-                />
+          priority
+        />
               </motion.div>
 
               <p className="text-xl sm:text-2xl text-white mb-8 max-w-md mx-auto md:mx-0">
                 A distinctive Japanese-inspired specialty drinks café, serving the Bath community for one day only.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <a 
+          <a
                   href="/preorder" 
                   className="bg-primary hover:bg-primary-light text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-beige-light focus:ring-offset-2 focus:ring-offset-[#2C5B43]"
                 >
                   Pre-order Now
-                </a>
-                <a 
+          </a>
+          <a
                   href="/menu" 
                   className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-beige-light focus:ring-offset-2 focus:ring-offset-[#2e5937]"
-                >
+          >
                   View Menu
-                </a>
-              </div>
+          </a>
+        </div>
             </motion.div>
             {/* Right side: Image/Graphic */}
             <motion.div 
@@ -95,7 +95,7 @@ export default function AboutPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <div className="bg-white/10 backdrop-filter backdrop-blur-sm p-1 rounded-xl shadow-xl flex items-center justify-center overflow-hidden h-80 md:h-[450px] lg:h-[500px]">
-                <Image
+          <Image
                   src="/images/matcha.jpg"
                   alt="Matcha Latte"
                   width={800}
