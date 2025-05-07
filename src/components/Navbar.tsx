@@ -17,6 +17,7 @@ const Navbar = () => {
     { name: "Menu", href: "/menu" },
     { name: "Pre-order", href: "/preorder" },
     { name: "FAQ", href: "/faq" },
+    { name: "Contact", href: "/contact" },
   ];
 
   useEffect(() => {

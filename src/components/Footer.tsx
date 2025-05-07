@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { PhoneIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import Logo from './Logo'; // Assuming Logo component is in the same directory or adjust path
 
 const Footer = () => {
   const footerLinks = [
@@ -72,7 +74,7 @@ const Footer = () => {
               >
                 Instagram
               </a>
-              <p className="text-gray-400">contact@lemme-cafe.com</p>
+              <p className="text-gray-400">lemmesipcafe@gmail.com</p>
             </motion.div>
           </div>
         </div>
@@ -91,6 +93,18 @@ const Footer = () => {
             One day pop-up in Bath • June 3rd, 2025
           </p>
         </motion.div>
+
+        {/* Bottom Bar with copyright and dev link */}
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center">
+          <p className="text-sm text-gray-400">
+            &copy; {new Date().getFullYear()} Lemme Sip Cafe. All rights reserved.
+          </p>
+          <Link href="/admin" legacyBehavior>
+            <a className="text-xs text-gray-500 hover:text-gray-300 transition-colors duration-300 mt-4 sm:mt-0">
+              Dev
+            </a>
+          </Link>
+        </div>
       </div>
     </footer>
   );

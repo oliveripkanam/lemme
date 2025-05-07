@@ -6,42 +6,42 @@ import AnimatedSection from "@/components/AnimatedSection";
 
 export default function FAQPage() {
   // FAQ items
-  const faqItems = [
+  const faqs = [
     {
       question: "When and where is Lemme Pop-up Café happening?",
-      answer: "Lemme Pop-up Café will be open for one day only on June 3rd, 2025, from 10:00 AM to 4:00 PM in Bath city centre. The exact location will be announced closer to the date."
+      answer: "Lemme Pop-up Café will be open for one day only on June 3rd, 2025, from 10:00 AM to 4:00 PM. We are located at 22C New Bond Street, Bath, BA1 1BA (just a 30-second walk from Waitrose).",
     },
     {
-      question: "What makes your drinks special?",
-      answer: "We specialize in Japanese-inspired specialty drinks that are rarely found in Bath, including Matcha, Hojicha, Yuzu Tea, and Genmaicha. Our drinks combine authentic flavors with high-quality ingredients."
+      question: "What kind of drinks do you offer?",
+      answer: "We specialize in Japanese-inspired drinks such as Matcha and Hojicha lattes, Yuzu and Genmaicha teas, alongside classic hot coffees and refreshing iced beverages. Check out our full Menu page!",
     },
     {
       question: "How do I pre-order?",
-      answer: "You can pre-order through our website's pre-order page. Select your drinks, specify your pickup time, and provide your name. We'll have your order ready for you at your chosen time on June 3rd."
+      answer: "You can pre-order through our website's Pre-order page. Select your drinks (customise them too!), specify your pickup time, and provide your name and email. By pre-ordering, your drink preparation will be prioritized when you arrive, allowing you to skip the main queue!",
     },
     {
-      question: "Is there a limit on pre-orders?",
-      answer: "We have a limited capacity for pre-orders to ensure quality. Once we reach capacity for a specific time slot, that slot will no longer be available for pre-order."
+      question: "Is there a discount for pre-ordering?",
+      answer: "Yes! You get 20p off all specialty drinks when you pre-order online. This discount is automatically applied when you select specialty drinks on the Pre-order page.",
+    },
+    {
+      question: "What are your operating hours for the pop-up?",
+      answer: "We will be open from 10:00 AM to 4:00 PM on June 3rd, 2025.",
     },
     {
       question: "What payment methods do you accept?",
-      answer: "We accept cash, credit cards, and contactless payments on the day of the event. Pre-orders are paid for upon pickup."
+      answer: "We accept credit/debit cards and contactless payments only (including Apple Pay and Google Pay). Pre-orders are paid for upon pickup using these methods. Please note, we do not accept cash.",
     },
     {
-      question: "Do you offer any discounts?",
-      answer: "Yes! We offer a £0.20 discount for customers who bring their own reusable cups, supporting our commitment to sustainability. We also offer 20p off specialty drinks when you pre-order online."
+      question: "Can I bring my own cup?",
+      answer: "Absolutely! We encourage sustainability. Bring your own reusable cup and receive a 20p discount on your drink.",
     },
     {
-      question: "How do I get updates about the event?",
-      answer: "If you provide your email during pre-order, we'll send you a reminder one day before the event with final details. You can also check our website for the latest information."
+      question: "Do you offer dairy-free milk alternatives?",
+      answer: "Yes, we offer oat milk as a dairy-free alternative for an additional £0.40.",
     },
     {
-      question: "Can I modify or cancel my pre-order?",
-      answer: "Yes, you can modify or cancel your pre-order up to 24 hours before the event. Please contact us at lemmesipcafe@gmail.com with your name and order details."
-    },
-    {
-      question: "Do you cater to dietary requirements?",
-      answer: "We offer oat milk as a dairy alternative. All our drinks can be customized to suit your preferences."
+      question: "Where can I find more information or updates?",
+      answer: "Follow our Instagram page @_lemme.sip_ for the latest news, menu highlights, and behind-the-scenes content! You can also reach out via our Contact page.",
     },
   ];
 
@@ -57,7 +57,7 @@ export default function FAQPage() {
     },
     {
       title: "Pricing and Payments",
-      content: "All prices are inclusive of VAT. We accept cash, credit cards, and contactless payments. Prices listed on our website are accurate at the time of publishing but may be subject to change."
+      content: "All prices are inclusive of VAT. We accept credit cards, and contactless payments. Prices listed on our website are accurate at the time of publishing but may be subject to change."
     },
     {
       title: "Sustainability Policy",
@@ -118,7 +118,7 @@ export default function FAQPage() {
         {activeTab === "faq" && (
           <AnimatedSection delay={0.2} className="max-w-4xl mx-auto">
             <div className="space-y-4">
-              {faqItems.map((item, index) => (
+              {faqs.map((item, index) => (
                 <Disclosure key={index} as="div" className="border border-gray-200 rounded-lg bg-white">
                   {({ open }) => (
                     <>
