@@ -144,10 +144,10 @@ export default function PreorderPage() {
             <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">
               Pre-order Your Drinks
             </h1>
-            <p className="mt-5 max-w-xl mx-auto text-xl text-white">
+            <p className="mt-5 max-w-xl mx-auto text-lg sm:text-xl text-white">
               Skip the queue on June 3rd by pre-ordering your drinks for pickup.
             </p>
-            <p className="mt-3 max-w-xl mx-auto text-lg text-primary font-medium">
+            <p className="mt-3 max-w-xl mx-auto text-base sm:text-lg text-primary font-medium">
               Pre-order now and get 20p off all specialty drinks!
             </p>
           </div>
@@ -158,7 +158,7 @@ export default function PreorderPage() {
             <AnimatedSection delay={0.1} className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
               <h2 className="text-xl font-semibold text-[#1a3328] mb-4">Your Information</h2>
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div className="sm:col-span-4">
+                <div className="sm:col-span-6 md:col-span-4">
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     Name <span className="text-red-500">*</span>
                   </label>
@@ -177,7 +177,7 @@ export default function PreorderPage() {
                   </div>
                 </div>
 
-                <div className="sm:col-span-4">
+                <div className="sm:col-span-6 md:col-span-4">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                     Email <span className="text-red-500">*</span>
                   </label>
@@ -199,7 +199,7 @@ export default function PreorderPage() {
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-6 md:col-span-3">
                   <label htmlFor="pickupTime" className="block text-sm font-medium text-gray-700">
                     Pickup Time <span className="text-red-500">*</span>
                   </label>
@@ -238,11 +238,11 @@ export default function PreorderPage() {
                     .map((drink) => (
                       <motion.div 
                         key={drink.id} 
-                        className="border border-gray-200 rounded-md p-4 bg-white hover:bg-gray-50 transition-colors duration-200"
+                        className="border border-gray-200 rounded-md p-3 sm:p-4 bg-white hover:bg-gray-50 transition-colors duration-200"
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="flex justify-between items-center">
-                          <label htmlFor={drink.id} className="font-medium text-[#1a3328]">
+                        <div className="flex flex-col items-start space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+                          <label htmlFor={drink.id} className="font-medium text-[#1a3328] text-sm sm:text-base">
                             {drink.name}
                           </label>
                           <div className="flex items-center">
@@ -261,7 +261,7 @@ export default function PreorderPage() {
                               min="0"
                               value={drink.quantity}
                               onChange={(e) => updateDrinkQuantity(drink.id, parseInt(e.target.value) || 0)}
-                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm"
+                              className="w-14 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm sm:w-12"
                             />
                             <button
                               type="button"
@@ -288,11 +288,11 @@ export default function PreorderPage() {
                     .map((drink) => (
                       <motion.div 
                         key={drink.id} 
-                        className="border border-gray-200 rounded-md p-4 bg-white hover:bg-gray-50 transition-colors duration-200"
+                        className="border border-gray-200 rounded-md p-3 sm:p-4 bg-white hover:bg-gray-50 transition-colors duration-200"
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="flex justify-between items-center">
-                          <label htmlFor={drink.id} className="font-medium text-[#1a3328]">
+                        <div className="flex flex-col items-start space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+                          <label htmlFor={drink.id} className="font-medium text-[#1a3328] text-sm sm:text-base">
                             {drink.name}
                           </label>
                           <div className="flex items-center">
@@ -311,7 +311,7 @@ export default function PreorderPage() {
                               min="0"
                               value={drink.quantity}
                               onChange={(e) => updateDrinkQuantity(drink.id, parseInt(e.target.value) || 0)}
-                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm"
+                              className="w-14 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm sm:w-12"
                             />
                             <button
                               type="button"
@@ -340,11 +340,11 @@ export default function PreorderPage() {
                     .map((drink) => (
                       <motion.div 
                         key={drink.id} 
-                        className="border border-gray-200 rounded-md p-4 bg-white hover:bg-gray-50 transition-colors duration-200"
+                        className="border border-gray-200 rounded-md p-3 sm:p-4 bg-white hover:bg-gray-50 transition-colors duration-200"
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="flex justify-between items-center">
-                          <label htmlFor={drink.id} className="font-medium text-[#1a3328]">
+                        <div className="flex flex-col items-start space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+                          <label htmlFor={drink.id} className="font-medium text-[#1a3328] text-sm sm:text-base">
                             {drink.name}
                           </label>
                           <div className="flex items-center">
@@ -363,7 +363,7 @@ export default function PreorderPage() {
                               min="0"
                               value={drink.quantity}
                               onChange={(e) => updateDrinkQuantity(drink.id, parseInt(e.target.value) || 0)}
-                              className="w-12 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm"
+                              className="w-14 text-center mx-1 border-gray-300 bg-white text-gray-800 rounded-md py-1 text-sm sm:w-12"
                             />
                             <button
                               type="button"
@@ -404,7 +404,7 @@ export default function PreorderPage() {
             <AnimatedSection delay={0.3} className="flex justify-end">
               <button
                 type="submit"
-                className="inline-flex items-center px-8 py-3 border border-gray-300 text-base font-semibold rounded-lg shadow-sm text-black bg-white hover:bg-beige-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 transform hover:scale-105"
+                className="inline-flex items-center px-6 py-2 sm:px-8 sm:py-3 border border-gray-300 text-base font-semibold rounded-lg shadow-sm text-black bg-white hover:bg-beige-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 transform hover:scale-105"
                 disabled={!isValid || parseFloat(orderTotal) === 0}
               >
                 Place Pre-order

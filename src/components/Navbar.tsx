@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
+import { Menu as MenuIcon, X as XIcon } from "lucide-react";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const navLinks = [
     { name: "About", href: "/" },
@@ -25,8 +27,23 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     handleScroll(); 
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Close mobile menu on resize to desktop
+    const handleResize = () => {
+      if (window.innerWidth >= 768) { // md breakpoint
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
     <motion.header 
@@ -46,7 +63,8 @@ const Navbar = () => {
               <Logo size="sm" isDark={true} />
             </Link>
           </div>
-          <nav className="flex items-center space-x-1 md:space-x-8">
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex items-center space-x-1 md:space-x-8">
             {navLinks.map((link, index) => (
               <motion.div
                 key={link.name}
@@ -58,7 +76,7 @@ const Navbar = () => {
                   href={link.href}
                   className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none ${
                     pathname !== link.href ?
-                      `focus:ring-1 focus:ring-beige-light focus:ring-offset-1 ${isScrolled ? "focus:ring-offset-[#2C5B43]" : "focus:ring-offset-transparent"}` 
+                      `focus:ring-1 focus:ring-beige-light focus:ring-offset-1 ${isScrolled ? "focus:ring-offset-[#2C5B43]" : "focus:ring-offset-primary-darker"}` 
                       : ""
                   } ${
                     pathname === link.href
@@ -78,8 +96,50 @@ const Navbar = () => {
               </motion.div>
             ))}
           </nav>
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={toggleMobileMenu}
+              className={`p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-inset ${
+                isScrolled ? "text-beige-light hover:text-white focus:ring-beige-light" : "text-white hover:text-beige-light focus:ring-white"
+              }`}
+              aria-label="Open main menu"
+            >
+              {isMobileMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Menu Panel */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className={`md:hidden ${isScrolled ? "bg-primary/90 backdrop-filter backdrop-blur-lg" : "bg-primary-darker/90 backdrop-filter backdrop-blur-lg" } pb-3 pt-2 border-t ${isScrolled ? "border-black/20" : "border-transparent"}`}
+          >
+            <nav className="px-2 space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)} // Close menu on link click
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 focus:outline-none focus:ring-1 focus:ring-beige-light focus:ring-offset-1 ${isScrolled ? "focus:ring-offset-[#2C5B43]" : "focus:ring-offset-primary-darker"} ${
+                    pathname === link.href
+                      ? "bg-primary-light text-white"
+                      : isScrolled ? "text-beige-light hover:bg-primary-lighter hover:text-white" : "text-white hover:bg-primary-light hover:text-beige-light"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };
