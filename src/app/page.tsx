@@ -128,7 +128,7 @@ export default function AboutPage() {
           {/* Title outside the card */}
           <h2 className="text-3xl font-bold text-[#1a3328] mb-6 text-center">Location & Time</h2>
           <div className="bg-white/10 backdrop-filter backdrop-blur-sm p-6 rounded-xl shadow-lg">
-            <div className="flex flex-col sm:flex-row justify-around items-start sm:items-center gap-6 text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row justify-around items-center sm:items-center gap-6 text-center sm:text-left">
               {/* When Section */}
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-primary-dark mb-1">When</h3>

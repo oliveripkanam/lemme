@@ -140,7 +140,7 @@ export default function PreorderPage() {
     <div className="bg-gradient-to-b from-[#2e5937] to-[#f8f5ea] min-h-screen">
       <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <AnimatedSection>
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">
               Pre-order Your Drinks
             </h1>
