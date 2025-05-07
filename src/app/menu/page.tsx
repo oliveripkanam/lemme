@@ -149,7 +149,7 @@ export default function MenuPage() {
             <p className="text-center text-beige-light mb-8 text-lg">Base Price: {category.basePrice}</p>
             
             {category.id === "specialty-drinks" && (
-              <p className="text-center text-yellow-300 font-semibold mb-8 text-lg">
+              <p className="text-center text-yellow-300 font-semibold mb-8 text-base">
                 ✨ Pre-order specialty drinks & save 20p! ✨
               </p>
             )}

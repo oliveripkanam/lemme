@@ -154,7 +154,7 @@ export default function PreorderPage() {
         </AnimatedSection>
 
         <div className="max-w-4xl mx-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 md:space-y-8">
             <AnimatedSection delay={0.1} className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
               <h2 className="text-xl font-semibold text-[#1a3328] mb-4">Your Information</h2>
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
