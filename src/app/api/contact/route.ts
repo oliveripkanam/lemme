@@ -56,7 +56,11 @@ export async function POST(request: Request) {
   try {
     console.log(`Submitting to Netlify at URL: ${siteUrl}`);
     console.log(`Payload being sent: ${netlifyPayload.toString()}`);
-    const response = await fetch(siteUrl, { // Use the site's URL provided by Netlify env var
+    // Construct the target URL to be the path of the static form
+    const submissionUrl = new URL("/contact-form.html", siteUrl).toString();
+    console.log(`Actually POSTing to: ${submissionUrl}`);
+
+    const response = await fetch(submissionUrl, { // POST to the static form's path
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: netlifyPayload.toString(),
