@@ -12,27 +12,34 @@ interface ContactFormData {
 }
 
 export async function POST(request: Request) {
-  let formDataObject: ContactFormData;
+  let formDataObject: ContactFormData & { 'form-name'?: string }; // Allow optional form-name
   try {
-    // Type assertion is okay here if we trust the client, 
-    // or add runtime validation (e.g., with Zod) for more robustness.
-    formDataObject = await request.json() as ContactFormData;
+    formDataObject = await request.json() as ContactFormData & { 'form-name'?: string };
   } catch (error) {
     console.error('Error parsing JSON body:', error);
     return NextResponse.json({ message: 'Invalid request body' }, { status: 400 });
   }
 
-  // Prepare payload for Netlify, filtering out undefined values
-  const netlifyPayloadData: Record<string, string> = {
-    'form-name': 'contact',
-    name: formDataObject.name,
-    email: formDataObject.email,
-    enquiryType: formDataObject.enquiryType,
-    message: formDataObject.message,
-  };
-  if (formDataObject.phone) { // Only include phone if it exists
-    netlifyPayloadData.phone = formDataObject.phone;
+  // Prepare payload for Netlify, ensuring form-name is present
+  const netlifyPayloadData: Record<string, string> = {};
+
+  // Copy all received fields, filtering out undefined
+  for (const key in formDataObject) {
+    if (Object.prototype.hasOwnProperty.call(formDataObject, key)) {
+      const value = (formDataObject as any)[key]; // Use any temporarily for simplicity here
+      if (value !== undefined && value !== null) {
+          netlifyPayloadData[key] = String(value);
+      }
+    }
   }
+  
+  // Ensure form-name is set (use received value or default)
+  netlifyPayloadData['form-name'] = formDataObject['form-name'] || 'contact'; 
+
+  // Optional: Remove honeypot field if it exists and is empty (or handle as needed)
+  // if (netlifyPayloadData['bot-field'] === '') {
+  //   delete netlifyPayloadData['bot-field'];
+  // }
 
   const netlifyPayload = new URLSearchParams(netlifyPayloadData);
 
