@@ -208,23 +208,7 @@ export default function ContactPage() {
         </form>
       </AnimatedSection>
 
-      {/* Hidden fallback form for Netlify detection */}
-      <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
-        <input type="text" name="name" />
-        <input type="email" name="email" />
-        <input type="tel" name="phone" />
-        <select name="enquiryType">
-          <option>Dummy</option>
-        </select>
-        <textarea name="message"></textarea>
-        {/* Add hidden honeypot field */}
-        <p hidden>
-          <label>
-            Don&apos;t fill this out: <input name="bot-field" />
-          </label>
-        </p>
-      </form>
-
+      {/* Success Modal */}
       <AnimatePresence>
         {showSuccessModal && (
           <motion.div
