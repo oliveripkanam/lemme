@@ -1,19 +1,40 @@
 import { NextResponse } from 'next/server';
 
+// Define the expected structure of the form data
+interface ContactFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  enquiryType: string;
+  message: string;
+  // Add 'form-name': string; if you expect it in the JSON body, 
+  // but we'll add it manually for Netlify anyway.
+}
+
 export async function POST(request: Request) {
-  let formDataObject: any = {};
+  let formDataObject: ContactFormData;
   try {
-    formDataObject = await request.json();
+    // Type assertion is okay here if we trust the client, 
+    // or add runtime validation (e.g., with Zod) for more robustness.
+    formDataObject = await request.json() as ContactFormData;
   } catch (error) {
     console.error('Error parsing JSON body:', error);
     return NextResponse.json({ message: 'Invalid request body' }, { status: 400 });
   }
 
-  // Add the form name for Netlify
-  const netlifyPayload = new URLSearchParams({
-    'form-name': 'contact', // Ensure this matches the 'name' attribute in your form if needed
-    ...formDataObject,
-  });
+  // Prepare payload for Netlify, filtering out undefined values
+  const netlifyPayloadData: Record<string, string> = {
+    'form-name': 'contact',
+    name: formDataObject.name,
+    email: formDataObject.email,
+    enquiryType: formDataObject.enquiryType,
+    message: formDataObject.message,
+  };
+  if (formDataObject.phone) { // Only include phone if it exists
+    netlifyPayloadData.phone = formDataObject.phone;
+  }
+
+  const netlifyPayload = new URLSearchParams(netlifyPayloadData);
 
   try {
     const response = await fetch(process.env.NETLIFY_URL || '/', { // Submit to the root path or specified URL
