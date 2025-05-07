@@ -216,17 +216,6 @@ export default function MenuPage() {
                        <p className="text-xs text-yellow-500 mt-1 text-right font-medium">{item.description}</p>
                     )}
                   </div>
-                  <div className="mt-auto">
-                    <p className="text-lg font-bold text-primary mt-2 text-right">
-                      {item.price}
-                      {item.isSpecialty && item.originalPrice && (
-                        <span className="text-sm line-through text-gray-500 ml-2">{item.originalPrice}</span>
-                      )}
-                    </p>
-                    {item.isSpecialty && (
-                       <p className="text-xs text-primary-dark text-right mt-0.5">Pre-order for 20p off!</p>
-                    )}
-                  </div>
                 </motion.div>
               ))}
             </div>

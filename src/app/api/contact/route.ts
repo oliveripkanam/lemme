@@ -36,8 +36,17 @@ export async function POST(request: Request) {
 
   const netlifyPayload = new URLSearchParams(netlifyPayloadData);
 
+  // Check if running in production/Netlify environment
+  const siteUrl = process.env.URL; 
+  if (!siteUrl) {
+    console.warn('URL environment variable not set. Skipping Netlify submission in local dev.');
+    // Simulate success in local development
+    return NextResponse.json({ message: 'Local submission successful (Netlify skipped)' }, { status: 200 });
+  }
+
   try {
-    const response = await fetch(process.env.NETLIFY_URL || '/', { // Submit to the root path or specified URL
+    console.log(`Submitting to Netlify at URL: ${siteUrl}`);
+    const response = await fetch(siteUrl, { // Use the site's URL provided by Netlify env var
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: netlifyPayload.toString(),
