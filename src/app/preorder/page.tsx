@@ -209,13 +209,21 @@ export default function PreorderPage() {
     };
     
     try {
-      const { error } = await supabase
+      const { data: newOrder, error } = await supabase
         .from('preorders')
-        .insert([orderDataForSupabase]);
+        .insert([orderDataForSupabase])
+        .select("id") // Ensure we select the ID of the newly inserted row
+        .single(); // We expect a single row back
 
       if (error) throw error;
 
       setOrderSuccess(true);
+      if (newOrder && newOrder.id) {
+        console.log('Preorder saved to Supabase, new order ID:', newOrder.id);
+        await callConfirmationEmailFunction(newOrder.id); // Call the Netlify function
+      } else {
+        console.warn('Preorder saved, but no ID returned from Supabase. Email not sent.');
+      }
       reset(); 
       setCartItems([]);
     } catch (error: unknown) {
@@ -252,6 +260,29 @@ export default function PreorderPage() {
   };
   const groupedDrinks = groupDrinksByCategory(availableDrinks);
 
+  // Function to call the Netlify function
+  async function callConfirmationEmailFunction(orderId: string) {
+    try {
+      const response = await fetch('/.netlify/functions/send-preorder-confirmation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ order_id: orderId }),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        console.log('Confirmation email function called successfully:', result.message);
+        // Optionally, provide user feedback here
+      } else {
+        console.error('Error calling confirmation email function:', result.error);
+        // Optionally, inform the user about the email sending issue
+      }
+    } catch (error) {
+      console.error('Network error or other issue calling Netlify function:', error);
+      // Optionally, inform the user
+    }
+  }
 
   if (orderSuccess) {
     return (
