@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import AnimatedSection from '@/components/AnimatedSection';
 
 const MAX_MESSAGE_LENGTH = 1000;
@@ -26,8 +26,6 @@ export default function ContactPage() {
     attachment: null,
   });
   const [charCount, setCharCount] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -47,55 +45,6 @@ export default function ContactPage() {
       setFormData(prev => ({ ...prev, attachment: null }));
       setFileName(null);
     }
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Netlify forms submission relies on the HTML attributes (data-netlify, method=POST, name=contact)
-    // The JS here is primarily for client-side validation, state updates, and showing the success modal.
-    // To make Netlify pick up the form submission when JS prevents default, 
-    // we'd normally re-submit programmatically or use AJAX.
-    // However, for simplicity with file uploads, we often let Netlify's HTML detection work.
-    // If we want to show a modal *after* Netlify processes, Netlify typically redirects to a success page.
-    // For this setup, we will manually trigger our success UI and assume Netlify processes the form in parallel from the HTML attributes.
-
-    // Simulate a delay for showing loading state, then show success
-    // In a real AJAX submission to Netlify, you would await the actual fetch response here.
-    console.log('Form data prepared for Netlify (HTML will handle actual submission):', formData);
-    
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-
-    setIsSubmitting(false);
-    setShowSuccessModal(true);
-    setFormData({
-      name: '', email: '', phone: '', enquiryType: 'Pre-order Question', message: '', attachment: null
-    });
-    setCharCount(0);
-    setFileName(null);
-    // (e.target as HTMLFormElement).reset(); // Resetting here might clear before Netlify grabs it if not using AJAX
-    // It's better to reset after the modal is closed, or rely on Netlify success page if not using a JS modal.
-    // For now, we reset the state, and the form fields are bound to state.
-
-    // If using a purely AJAX submission to Netlify:
-    /* 
-    const netlifyForm = new FormData(e.target as HTMLFormElement);
-    // netlifyForm.append('form-name', 'contact'); // Already in hidden input
-    try {
-      await fetch("", { // POST to the same page (root for Netlify)
-        method: "POST",
-        body: netlifyForm,
-      });
-      setIsSubmitting(false);
-      setShowSuccessModal(true);
-      // Reset form state
-    } catch (error) {
-      console.error('Submission error:', error);
-      setIsSubmitting(false);
-      alert('There was an error submitting your enquiry. Please try again.');
-    }
-    */
   };
 
   const enquiryTypes = [
@@ -122,7 +71,6 @@ export default function ContactPage() {
           method="POST" 
           data-netlify="true" 
           data-netlify-honeypot="bot-field"
-          onSubmit={handleSubmit} 
           className="bg-white p-6 sm:p-8 rounded-xl shadow-2xl space-y-6"
         >
           {/* Netlify spam prevention: honeypot field */}
@@ -241,72 +189,13 @@ export default function ContactPage() {
 
           <div className="pt-2">
             <button
-              type="submit"
-              disabled={isSubmitting}
               className="w-full flex justify-center items-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300 disabled:opacity-70"
             >
-              {isSubmitting ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <PaperAirplaneIcon className='h-5 w-5 mr-2 text-white'/> Send Enquiry
-                </>
-              )}
+              <PaperAirplaneIcon className='h-5 w-5 mr-2 text-white'/> Send Enquiry
             </button>
           </div>
         </form>
       </AnimatedSection>
-
-      {/* Success Modal */}
-      <AnimatePresence>
-        {showSuccessModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md text-center relative"
-            >
-              <button 
-                onClick={() => setShowSuccessModal(false)} 
-                className='absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors'
-                aria-label="Close success message"
-              >
-                <XMarkIcon className='h-6 w-6'/>
-              </button>
-              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4 sm:mb-5">
-                <svg className="h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[#1a3328] mb-3">
-                Enquiry Sent!
-              </h3>
-              <p className="text-gray-600 text-sm sm:text-base mb-6">
-                Thank you for reaching out. We&apos;ll respond to your enquiry within 2 business days.
-              </p>
-              <button
-                onClick={() => setShowSuccessModal(false)}
-                className="w-full sm:w-auto px-8 py-2.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors duration-200 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              >
-                Close
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 } 
