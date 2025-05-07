@@ -375,13 +375,14 @@ export default function PreorderPage() {
                             </button>
                           </div>
                         </div>
+                        {/* Price display for specialty drinks */}
                         {drink.category === "specialtyDrinks" && drink.discountedPrice ? (
                           <div className="text-sm mt-1 text-right">
                             <span className="line-through text-gray-500 mr-2">{drink.price}</span>
-                            <span className="text-primary font-medium">{drink.discountedPrice}</span>
+                            <span className="text-yellow-500 font-bold">{drink.discountedPrice}</span>
                           </div>
                         ) : (
-                          <div className="text-sm text-primary mt-1 text-right">{drink.price}</div>
+                          <div className="text-sm text-primary mt-1 text-right font-medium">{drink.price}</div>
                         )}
                       </motion.div>
                     ))}
@@ -403,7 +404,7 @@ export default function PreorderPage() {
             <AnimatedSection delay={0.3} className="flex justify-end">
               <button
                 type="submit"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-black bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-8 py-3 border border-gray-300 text-base font-semibold rounded-lg shadow-sm text-black bg-white hover:bg-beige-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 transform hover:scale-105"
                 disabled={!isValid || parseFloat(orderTotal) === 0}
               >
                 Place Pre-order
