@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Form for Netlify Detection</title>
+</head>
+<body>
+    <!-- This form is hidden from users and is only for Netlify's build process to detect the form structure. -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+        <input type="hidden" name="form-name" value="contact" />
+        <p style="display:none;">
+            <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+        </p>
+        <input type="text" name="name" />
+        <input type="email" name="email" />
+        <input type="tel" name="phone" />
+        <select name="enquiryType">
+            <option value="general">General Enquiry</option>
+            <option value="preorder">Pre-order Question</option>
+            <option value="feedback">Feedback</option>
+            <option value="other">Other</option>
+        </select>
+        <textarea name="message"></textarea>
+    </form>
+</body>
+</html> 
