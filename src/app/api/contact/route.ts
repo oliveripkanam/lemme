@@ -55,6 +55,7 @@ export async function POST(request: Request) {
 
   try {
     console.log(`Submitting to Netlify at URL: ${siteUrl}`);
+    console.log(`Payload being sent: ${netlifyPayload.toString()}`);
     const response = await fetch(siteUrl, { // Use the site's URL provided by Netlify env var
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
