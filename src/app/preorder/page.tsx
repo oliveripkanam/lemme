@@ -25,7 +25,8 @@ interface CartItem {
   baseDrinkId: string;
   baseDrinkName: string;
   hasOatMilk: boolean;
-  hasSyrup: boolean;
+  hasCaramelSyrup: boolean;
+  hasVanillaSyrup: boolean;
   quantity: number;
   unitPrice: number; // Final price for this specific variant including options and discounts
   originalBasePrice: number; // Base price before any modifications or discounts
@@ -36,7 +37,8 @@ interface CartItem {
 interface CustomizationModalData {
   drink: BaseDrink;
   oatMilk: boolean;
-  syrup: boolean;
+  hasCaramelSyrup: boolean;
+  hasVanillaSyrup: boolean;
   quantity: number;
 }
 
@@ -87,7 +89,13 @@ export default function PreorderPage() {
     { id: "genmaichaIced", name: "Genmaicha (Iced)", category: "specialtyDrinks", price: 4.00 },
   ], []);
 
-  const calculateUnitPrice = (basePrice: number, isSpecialty: boolean, hasOat: boolean, hasSyrup: boolean): number => {
+  const calculateUnitPrice = (
+    basePrice: number, 
+    isSpecialty: boolean, 
+    hasOat: boolean, 
+    hasCaramel: boolean,
+    hasVanilla: boolean
+  ): number => {
     let price = basePrice;
     if (isSpecialty) {
       price -= SPECIALTY_DISCOUNT;
@@ -95,14 +103,17 @@ export default function PreorderPage() {
     if (hasOat) {
       price += OAT_MILK_COST;
     }
-    if (hasSyrup) {
+    if (hasCaramel) {
+      price += SYRUP_COST;
+    }
+    if (hasVanilla) {
       price += SYRUP_COST;
     }
     return Math.max(0, price); // Ensure price doesn't go below 0
   };
 
   const openCustomizationModal = (drink: BaseDrink) => {
-    setModalData({ drink, oatMilk: false, syrup: false, quantity: 1 });
+    setModalData({ drink, oatMilk: false, hasCaramelSyrup: false, hasVanillaSyrup: false, quantity: 1 });
     setShowCustomizationModal(true);
   };
 
@@ -112,23 +123,30 @@ export default function PreorderPage() {
     }
   };
 
-  const handleModalOptionChange = (option: 'oatMilk' | 'syrup') => {
+  const handleModalOptionChange = (option: 'oatMilk' | 'caramelSyrup' | 'vanillaSyrup') => {
     if (modalData) {
-      setModalData({ ...modalData, [option]: !modalData[option] });
+      if (option === 'oatMilk') {
+        setModalData({ ...modalData, oatMilk: !modalData.oatMilk });
+      } else if (option === 'caramelSyrup') {
+        setModalData({ ...modalData, hasCaramelSyrup: !modalData.hasCaramelSyrup });
+      } else if (option === 'vanillaSyrup') {
+        setModalData({ ...modalData, hasVanillaSyrup: !modalData.hasVanillaSyrup });
+      }
     }
   };
   
   const addOrUpdateCartItem = () => {
     if (!modalData) return;
 
-    const { drink, oatMilk, syrup, quantity } = modalData;
-    const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', oatMilk, syrup);
+    const { drink, oatMilk, hasCaramelSyrup, hasVanillaSyrup, quantity } = modalData;
+    const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', oatMilk, hasCaramelSyrup, hasVanillaSyrup);
     
     // Check if an identical item already exists
     const existingItemIndex = cartItems.findIndex(item => 
       item.baseDrinkId === drink.id &&
       item.hasOatMilk === oatMilk &&
-      item.hasSyrup === syrup
+      item.hasCaramelSyrup === hasCaramelSyrup &&
+      item.hasVanillaSyrup === hasVanillaSyrup
     );
 
     if (existingItemIndex > -1) {
@@ -141,7 +159,8 @@ export default function PreorderPage() {
         baseDrinkId: drink.id,
         baseDrinkName: drink.name,
         hasOatMilk: oatMilk,
-        hasSyrup: syrup,
+        hasCaramelSyrup: hasCaramelSyrup,
+        hasVanillaSyrup: hasVanillaSyrup,
         quantity: quantity,
         unitPrice: unitPrice,
         originalBasePrice: drink.price,
@@ -198,7 +217,8 @@ export default function PreorderPage() {
         quantity: item.quantity,
         options: {
           oatMilk: item.hasOatMilk,
-          syrup: item.hasSyrup,
+          caramelSyrup: item.hasCaramelSyrup,
+          vanillaSyrup: item.hasVanillaSyrup,
         },
         unitPrice: item.unitPrice,
         isSpecialty: item.isSpecialty,
@@ -280,11 +300,15 @@ export default function PreorderPage() {
           <div className="text-center mb-8 md:mb-12">
             <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">Pre-order Your Drinks</h1>
             <p className="mt-5 max-w-xl mx-auto text-lg sm:text-xl text-white">Pre-order now to skip the queue! Your drinks will be prioritized when you arrive.</p>
-            <p className="mt-3 max-w-xl mx-auto text-base sm:text-lg text-primary font-medium">
-              Plus, get 20p off all specialty drinks! (Base price)
-            </p>
+            <motion.p 
+              className="mt-3 max-w-xl mx-auto text-base sm:text-lg text-yellow-400 font-medium"
+              animate={{ scale: [1, 1.03, 1], opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              ✨ Plus, get 20p off all specialty drinks! (Base price) ✨
+            </motion.p>
              <p className="mt-4 max-w-xl mx-auto text-sm text-yellow-300">
-              Oat Milk: +£{OAT_MILK_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Add Syrup: +£{SYRUP_COST.toFixed(2)}
+              Oat Milk: +£{OAT_MILK_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Caramel Syrup: +£{SYRUP_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Vanilla Syrup: +£{SYRUP_COST.toFixed(2)}
             </p>
           </div>
         </AnimatedSection>
@@ -296,29 +320,41 @@ export default function PreorderPage() {
               <AnimatedSection key={category} className="bg-white rounded-lg p-4 sm:p-6 shadow-md border border-gray-200">
                 <h2 className="text-xl sm:text-2xl font-semibold text-[#1a3328] mb-4 capitalize">
                   {category.replace(/([A-Z])/g, ' $1').trim()} 
-                  {category === 'specialtyDrinks' && <span className="text-sm text-primary font-normal"> (20p off base price)</span>}
+                  {/* {category === 'specialtyDrinks' && <span className="text-sm text-primary font-normal"> (20p off base price)</span>} */}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {drinksInCategory.map((drink) => (
-                    <motion.div 
-                      key={drink.id}
-                      className="border border-gray-200 rounded-md p-3 hover:shadow-lg transition-shadow duration-200 flex items-center justify-between"
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <div>
-                        <h3 className="font-medium text-[#1a3328] text-base sm:text-lg">{drink.name}</h3>
-                        <p className="text-sm text-gray-600">Base Price: £{drink.price.toFixed(2)}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => openCustomizationModal(drink)}
-                        className="ml-2 p-2 bg-primary-light hover:bg-primary text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
-                        aria-label={`Customize and add ${drink.name}`}
+                  {drinksInCategory.map((drink) => {
+                    const isSpecialty = drink.category === 'specialtyDrinks';
+                    const discountedPrice = isSpecialty ? drink.price - SPECIALTY_DISCOUNT : drink.price;
+                    return (
+                      <motion.div 
+                        key={drink.id}
+                        className="border border-gray-200 rounded-md p-3 hover:shadow-lg transition-shadow duration-200 flex items-center justify-between"
+                        whileHover={{ scale: 1.02 }}
                       >
-                        <PlusIcon className="h-5 w-5 text-gray-800" />
-                      </button>
-                    </motion.div>
-                  ))}
+                        <div className="flex-grow">
+                          <h3 className="font-medium text-[#1a3328] text-base sm:text-lg">{drink.name}</h3>
+                          {isSpecialty ? (
+                            <div className="mt-1">
+                              <span className="text-xs text-gray-500 line-through mr-2">£{drink.price.toFixed(2)}</span>
+                              <span className="text-sm font-bold text-yellow-600">£{discountedPrice.toFixed(2)}</span>
+                               {/* <p className="text-xs text-yellow-600 mt-0.5">Save 20p with pre-order!</p> */}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-600 mt-1">Price: £{drink.price.toFixed(2)}</p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => openCustomizationModal(drink)}
+                          className="ml-2 p-2 bg-primary-light hover:bg-primary text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 flex-shrink-0"
+                          aria-label={`Customize and add ${drink.name}`}
+                        >
+                          <PlusIcon className="h-5 w-5 text-gray-800" />
+                        </button>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </AnimatedSection>
             ))}
@@ -374,9 +410,11 @@ export default function PreorderPage() {
                           <h4 className="font-semibold text-[#1a3328]">{item.baseDrinkName}</h4>
                           <div className="text-xs text-gray-600">
                             {item.hasOatMilk && <span>Oat Milk</span>}
-                            {item.hasOatMilk && item.hasSyrup && <span>, </span>}
-                            {item.hasSyrup && <span>Syrup</span>}
-                            {!item.hasOatMilk && !item.hasSyrup && <span>Standard</span>}
+                            {(item.hasOatMilk && (item.hasCaramelSyrup || item.hasVanillaSyrup)) && <span>, </span>}
+                            {item.hasCaramelSyrup && <span>Caramel Syrup</span>}
+                            {item.hasCaramelSyrup && item.hasVanillaSyrup && <span>, </span>}
+                            {item.hasVanillaSyrup && <span>Vanilla Syrup</span>}
+                            {!item.hasOatMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && <span>Standard</span>}
                           </div>
                           <p className="text-xs text-primary">Unit Price: £{item.unitPrice.toFixed(2)}</p>
                         </div>
@@ -415,6 +453,7 @@ export default function PreorderPage() {
                 <ul className="list-disc list-inside space-y-1 text-gray-700">
                   <li>Confirmation email will be sent within 2 business days.</li>
                   <li>We&apos;ll send you a reminder email a week before and a day before June 3rd (the trading day).</li>
+                  <li>You don&apos;t need to pay now; payment will be collected at the store on June 3rd.</li>
                 </ul>
               </div>
             </AnimatedSection>
@@ -451,7 +490,7 @@ export default function PreorderPage() {
                 {modalData.drink.category === 'specialtyDrinks' && <span className="text-primary ml-1">(-£{SPECIALTY_DISCOUNT.toFixed(2)} pre-order discount)</span>}
               </p>
 
-              <div className="space-y-4 my-6">
+              <div className="space-y-3 my-6">
                 <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                   <span className="flex items-center">
                     <span>Use Oat Milk</span>
@@ -467,15 +506,29 @@ export default function PreorderPage() {
                   </div>
                 </label>
                 <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                   <span className="flex items-center">
-                    <span>Add Syrup</span>
+                  <span className="flex items-center">
+                    <span>Add Caramel Syrup</span>
                   </span>
                   <div className="flex items-center">
                     <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
                     <input 
                       type="checkbox" 
-                      checked={modalData.syrup}
-                      onChange={() => handleModalOptionChange('syrup')}
+                      checked={modalData.hasCaramelSyrup}
+                      onChange={() => handleModalOptionChange('caramelSyrup')}
+                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
+                    />
+                  </div>
+                </label>
+                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <span className="flex items-center">
+                    <span>Add Vanilla Syrup</span>
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
+                    <input 
+                      type="checkbox" 
+                      checked={modalData.hasVanillaSyrup}
+                      onChange={() => handleModalOptionChange('vanillaSyrup')}
                       className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
                     />
                   </div>
@@ -494,7 +547,7 @@ export default function PreorderPage() {
               <div className="text-right mb-6">
                  <p className="text-sm text-gray-500">Price for this item (x{modalData.quantity}):</p>
                  <p className="text-2xl font-bold text-primary">
-                    £{(calculateUnitPrice(modalData.drink.price, modalData.drink.category === 'specialtyDrinks', modalData.oatMilk, modalData.syrup) * modalData.quantity).toFixed(2)}
+                    £{(calculateUnitPrice(modalData.drink.price, modalData.drink.category === 'specialtyDrinks', modalData.oatMilk, modalData.hasCaramelSyrup, modalData.hasVanillaSyrup) * modalData.quantity).toFixed(2)}
                  </p>
               </div>
 

@@ -170,7 +170,8 @@ export default function MenuPage() {
             </p>
             <div className="mt-4 space-y-2 text-gray-50">
               <p><span className="font-semibold text-gray-50">Oat Milk:</span> +£0.40</p>
-              <p><span className="font-semibold text-gray-50">Add Syrup:</span> +£0.40</p>
+              <p><span className="font-semibold text-gray-50">Caramel Syrup:</span> +£0.40</p>
+              <p><span className="font-semibold text-gray-50">Vanilla Syrup:</span> +£0.40</p>
             </div>
           </div>
         </AnimatedSection>

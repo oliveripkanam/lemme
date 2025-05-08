@@ -48,7 +48,7 @@ export default function AboutPage() {
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
             {/* Left side: Text content & CTAs */}
             <motion.div 
-              className="md:w-5/12 text-center md:text-left flex flex-col items-center md:items-start"
+              className="md:w-5/12 text-center md:text-left flex flex-col items-center md:items-center"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
@@ -72,20 +72,31 @@ export default function AboutPage() {
               <p className="text-xl sm:text-2xl text-white mb-8 max-w-md mx-auto md:mx-0">
                 A distinctive Japanese-inspired specialty drinks café, serving the Bath community for one day only.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-          <a
+              <div className="flex flex-col items-center md:items-center">
+                <motion.a
                   href="/preorder" 
-                  className="bg-primary hover:bg-primary-light text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-beige-light focus:ring-offset-2 focus:ring-offset-[#2C5B43]"
+                  className="border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#2e5937]"
+                  animate={{ 
+                    scale: [1, 1.02, 1] // Continuous pulsing scale when not hovered
+                  }}
+                  whileHover={{
+                    scale: 1, // Set scale to 1 on hover, stopping the pulse
+                    rotate: [0, -2.5, 2.5, -2.5, 2.5, 0], // Shake sequence ending level
+                    backgroundColor: "rgba(255, 255, 255, 0.1)"
+                  }}
+                  transition={{
+                    // Transition for the continuous scale animation (animate prop)
+                    scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }, 
+                    // Removed default spring type to allow smoother transition to hover scale
+                    // Specific transition for the rotate animation in whileHover
+                    rotate: { duration: 0.4, ease: "easeInOut" }, 
+                    // Specific transition for backgroundColor in whileHover
+                    backgroundColor: { duration: 0.1, ease: "easeIn" } 
+                  }}
                 >
-                  Pre-order Now
-          </a>
-          <a
-                  href="/menu" 
-                  className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-beige-light focus:ring-offset-2 focus:ring-offset-[#2e5937]"
-          >
-                  View Menu
-          </a>
-        </div>
+                  Pre-order Now for a discount
+                </motion.a>
+              </div>
             </motion.div>
             {/* Right side: Image/Graphic */}
             <motion.div 

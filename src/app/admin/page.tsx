@@ -6,12 +6,20 @@ import { EyeIcon, EyeSlashIcon, MagnifyingGlassIcon, CheckCircleIcon } from "@he
 import { motion, AnimatePresence } from "framer-motion";
 
 // Define types for order data
+interface DrinkDetailOptions {
+  oatMilk?: boolean;
+  caramelSyrup?: boolean;
+  vanillaSyrup?: boolean;
+}
+
 interface DrinkDetail {
-  id: string;
+  id: string; // This is baseDrinkId
   name: string;
   quantity: number;
-  price: string;
-  discountedPrice?: string;
+  unitPrice: number; // Corrected to match Supabase data
+  isSpecialty?: boolean; // Added, as it's in Supabase data
+  originalBasePrice?: number; // Added, as it's in Supabase data
+  options: DrinkDetailOptions;
 }
 
 interface PreOrder {
@@ -337,15 +345,24 @@ export default function AdminPage() {
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">{order.pickup_time}</td>
                     <td className="px-3 py-4 text-sm text-gray-700">
-                      <ul className="list-disc list-inside pl-2 space-y-0.5">
-                        {order.drinks.map(drink => (
-                          <li key={drink.id}>
-                            {drink.quantity}x {drink.name} 
-                            <span className="text-xs text-gray-500 ml-1">
-                                ({drink.discountedPrice ? drink.discountedPrice : drink.price})
-                            </span>
-                          </li>
-                        ))}
+                      <ul className="list-disc list-inside space-y-1">
+                        {order.drinks.map((drink, index) => {
+                          const selectedOptions = [];
+                          if (drink.options?.oatMilk) selectedOptions.push("Oat Milk");
+                          if (drink.options?.caramelSyrup) selectedOptions.push("Caramel Syrup");
+                          if (drink.options?.vanillaSyrup) selectedOptions.push("Vanilla Syrup");
+                          
+                          return (
+                            <li key={`${drink.id}-${index}-${order.id}`}>
+                              {drink.quantity}x {drink.name}
+                              {selectedOptions.length > 0 && (
+                                <span className="text-xs text-gray-500 ml-1">
+                                  ({selectedOptions.join(", ")})
+                                </span>
+                              )}
+                            </li>
+                          );
+                        })}
                       </ul>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700 font-medium">£{order.total_price.toFixed(2)}</td>
