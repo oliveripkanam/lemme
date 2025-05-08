@@ -86,7 +86,7 @@ export default function PreorderPage() {
     { id: "matchaIced", name: "Matcha (Iced)", category: "specialtyDrinks", price: 4.00 },
     { id: "hojichaHot", name: "Hojicha (Hot)", category: "specialtyDrinks", price: 4.00 },
     { id: "hojichaIced", name: "Hojicha (Iced)", category: "specialtyDrinks", price: 4.00 },
-    { id: "icedLemonTea", name: "Iced Lemon Tea", category: "specialtyDrinks", price: 4.00 },
+    { id: "hkIcedLemonTea", name: "Hong Kong Styled Iced Lemon Tea", category: "specialtyDrinks", price: 4.00 },
     { id: "yuzuTeaHot", name: "Yuzu Tea (Hot)", category: "specialtyDrinks", price: 4.00 },
     { id: "yuzuTeaIced", name: "Yuzu Tea (Iced)", category: "specialtyDrinks", price: 4.00 },
     { id: "genmaichaHot", name: "Genmaicha (Hot)", category: "specialtyDrinks", price: 4.00 },
@@ -222,13 +222,15 @@ export default function PreorderPage() {
   const updateCartItemQuantity = (cartItemId: string, amount: number) => {
     setCartItems(prevCart => {
       const itemIndex = prevCart.findIndex(item => item.id === cartItemId);
-      if (itemIndex === -1) return prevCart;
+      if (itemIndex === -1) {
+        return prevCart;
+      }
 
       const updatedCart = [...prevCart];
       const newQuantity = updatedCart[itemIndex].quantity + amount;
 
       if (newQuantity <= 0) {
-        updatedCart.splice(itemIndex, 1); // Remove item if quantity is 0 or less
+        updatedCart.splice(itemIndex, 1);
       } else {
         updatedCart[itemIndex].quantity = newQuantity;
       }
@@ -359,7 +361,7 @@ export default function PreorderPage() {
             >
               ✨ Plus, get 20p off all specialty drinks! (Base price) ✨
             </motion.p>
-             <p className="mt-4 max-w-xl mx-auto text-sm text-yellow-300">
+            <p className="mt-4 max-w-xl mx-auto text-sm text-yellow-300">
               Oat Milk: +£{OAT_MILK_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Caramel Syrup: +£{SYRUP_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Vanilla Syrup: +£{SYRUP_COST.toFixed(2)}
             </p>
           </div>
@@ -398,7 +400,7 @@ export default function PreorderPage() {
                           <button
                             type="button"
                             onClick={() => {
-                              const directAddIds = ['icedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
+                              const directAddIds = ['hkIcedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
                               if (directAddIds.includes(drink.id)) {
                                 addSimpleItemToCart(drink);
                               } else {
@@ -466,24 +468,22 @@ export default function PreorderPage() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-semibold text-[#1a3328]">{item.baseDrinkName}</h4>
-                          <div className="text-xs text-gray-600">
-                            {item.hasOatMilk && <span>Oat Milk</span>}
-                            {(item.hasOatMilk && (item.hasCaramelSyrup || item.hasVanillaSyrup || item.hasSemiSkimmedMilk)) && <span>, </span>}
-                            {item.hasSemiSkimmedMilk && <span>Semi-Skimmed Milk</span>}
-                            {(item.hasSemiSkimmedMilk && (item.hasCaramelSyrup || item.hasVanillaSyrup)) && <span>, </span>}
-                            {item.hasCaramelSyrup && <span>Caramel Syrup</span>}
-                            {item.hasCaramelSyrup && item.hasVanillaSyrup && <span>, </span>}
-                            {item.hasVanillaSyrup && <span>Vanilla Syrup</span>}
-                            {!item.hasOatMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.hasSemiSkimmedMilk && !item.isDecaf && <span>Standard</span>}
+                          <h4 className="font-semibold text-[#1a3328]">{item.baseDrinkName}{item.isDecaf && <span className="text-xs text-blue-600 ml-1 font-normal">(Decaf)</span>}</h4>
+                          <div className="text-xs text-gray-600 mt-0.5">
+                            {item.hasOatMilk && <div className="block">Oat Milk</div>}
+                            {item.hasSemiSkimmedMilk && <div className="block">Semi-Skimmed Milk</div>}
+                            {item.hasCaramelSyrup && <div className="block">Caramel Syrup</div>}
+                            {item.hasVanillaSyrup && <div className="block">Vanilla Syrup</div>}
+                            {(!item.hasOatMilk && !item.hasSemiSkimmedMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.isDecaf && (item.baseDrinkId === 'espresso' || item.baseDrinkId === 'americano' || item.baseDrinkId === 'icedAmericano')) && <div className="block">Black</div>}
+                            {(!item.hasOatMilk && !item.hasSemiSkimmedMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.isDecaf && !['espresso', 'americano', 'icedAmericano'].includes(item.baseDrinkId)) && <div className="block">Standard Milk</div>}
                           </div>
-                          <p className="text-xs text-primary">Unit Price: £{item.unitPrice.toFixed(2)}</p>
+                          <p className="text-xs text-primary mt-1">Unit Price: £{item.unitPrice.toFixed(2)}</p>
                         </div>
-                        <button onClick={() => removeCartItem(item.id)} className="text-red-500 hover:text-red-700 p-1">
+                        <button onClick={() => removeCartItem(item.id)} className="text-red-500 hover:text-red-700 p-1 flex-shrink-0">
                           <XMarkIcon className="h-4 w-4"/>
                         </button>
                       </div>
-                      <div className="flex items-center justify-end mt-1">
+                      <div className="flex items-center justify-end">
                         <button onClick={() => updateCartItemQuantity(item.id, -1)} className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20"><MinusIcon className="h-5 w-5" /></button>
                         <span className="w-10 text-center text-sm font-medium text-[#1a3328]">{item.quantity}</span>
                         <button onClick={() => updateCartItemQuantity(item.id, 1)} className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-primary-light/20"><PlusIcon className="h-5 w-5" /></button>

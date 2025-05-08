@@ -33,7 +33,7 @@ export default function MenuPage() {
     },
     {
       id: "cold-drinks",
-      title: "Cold Drinks",
+      title: "Iced Coffee",
       basePrice: "£3.50",
       items: [
         { id: "iced-latte", name: "Iced Latte", price: "£3.50" },
@@ -83,7 +83,7 @@ export default function MenuPage() {
         },
         { 
           id: "iced-lemon-tea", 
-          name: "Iced Lemon Tea", 
+          name: "Hong Kong Styled Iced Lemon Tea",
           price: "£4.00", 
           discountedPrice: "£3.80",
           description: "Save 20p with pre-order!",
@@ -161,17 +161,27 @@ export default function MenuPage() {
 
       {/* Menu Content */}
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-        {/* Extra Charges Information */}
+        {/* New Two-Card Layout Replacing old Customise section */}
         <AnimatedSection delay={0.1} className="mb-12 md:mb-16">
-          <div className="max-w-2xl mx-auto bg-white/20 backdrop-filter backdrop-blur-sm p-6 rounded-xl shadow-lg text-center border border-white/30">
-            <h2 className="text-2xl font-semibold text-white mb-3">Customise Your Drink!</h2>
-            <p className="text-gray-100 text-lg">
-              Make it your own with our available extras:
-            </p>
-            <div className="mt-4 space-y-2 text-gray-50">
-              <p><span className="font-semibold text-gray-50">Oat Milk:</span> +£0.40</p>
-              <p><span className="font-semibold text-gray-50">Caramel Syrup:</span> +£0.40</p>
-              <p><span className="font-semibold text-gray-50">Vanilla Syrup:</span> +£0.40</p>
+          <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch max-w-4xl mx-auto">
+            {/* Card 1: Customise Your Drink! */}
+            <div className="flex-1 bg-white/20 backdrop-filter backdrop-blur-sm p-6 rounded-xl shadow-xl text-center border border-white/30">
+              <h3 className="text-xl font-semibold mb-2 text-white">Customise Your Drink!</h3>
+              <p className="text-sm mb-3 text-gray-100">Make it your own with our available extras:</p>
+              <ul className="space-y-1 text-sm text-left mx-auto inline-block text-gray-50">
+                <li>Oat Milk: +£0.40</li>
+                <li>Caramel Syrup: +£0.40</li>
+                <li>Vanilla Syrup: +£0.40</li>
+              </ul>
+            </div>
+
+            {/* Card 2: Extra Info */}
+            <div className="flex-1 bg-white/20 backdrop-filter backdrop-blur-sm p-6 rounded-xl shadow-xl text-center border border-white/30">
+              <h3 className="text-xl font-semibold mb-2 text-white">Extra Info</h3>
+              <ul className="space-y-1 text-sm text-gray-50">
+                <li className="text-center">Our standard dairy milk is semi-skimmed.</li>
+                <li className="text-center">Switch to Decaf for any coffee at no extra charge.</li>
+              </ul>
             </div>
           </div>
         </AnimatedSection>
