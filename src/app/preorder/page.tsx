@@ -414,7 +414,7 @@ export default function PreorderPage() {
                 <p className="font-semibold mb-2 text-gray-700">Important Information:</p>
                 <ul className="list-disc list-inside space-y-1 text-gray-700">
                   <li>Confirmation email will be sent within 2 business days.</li>
-                  <li>We'll send you a reminder email a week before and a day before June 3rd (the trading day).</li>
+                  <li>We&apos;ll send you a reminder email a week before and a day before June 3rd (the trading day).</li>
                 </ul>
               </div>
             </AnimatedSection>
