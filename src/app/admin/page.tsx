@@ -6,20 +6,17 @@ import { EyeIcon, EyeSlashIcon, MagnifyingGlassIcon, CheckCircleIcon } from "@he
 import { motion, AnimatePresence } from "framer-motion";
 
 // Define types for order data
-interface DrinkDetailOptions {
-  oatMilk?: boolean;
-  caramelSyrup?: boolean;
-  vanillaSyrup?: boolean;
-}
-
 interface DrinkDetail {
-  id: string; // This is baseDrinkId
-  name: string;
+  drink_name: string;
   quantity: number;
-  unitPrice: number; // Corrected to match Supabase data
-  isSpecialty?: boolean; // Added, as it's in Supabase data
-  originalBasePrice?: number; // Added, as it's in Supabase data
-  options: DrinkDetailOptions;
+  unit_price: number;
+  oat_milk?: boolean;
+  caramel_syrup?: boolean;
+  vanilla_syrup?: boolean;
+  semi_skimmed_milk?: boolean;
+  is_decaf?: boolean;
+  is_specialty?: boolean;
+  original_base_price?: number;
 }
 
 interface PreOrder {
@@ -346,23 +343,19 @@ export default function AdminPage() {
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">{order.pickup_time}</td>
                     <td className="px-3 py-4 text-sm text-gray-700">
                       <ul className="list-disc list-inside space-y-1">
-                        {order.drinks.map((drink, index) => {
-                          const selectedOptions = [];
-                          if (drink.options?.oatMilk) selectedOptions.push("Oat Milk");
-                          if (drink.options?.caramelSyrup) selectedOptions.push("Caramel Syrup");
-                          if (drink.options?.vanillaSyrup) selectedOptions.push("Vanilla Syrup");
-                          
-                          return (
-                            <li key={`${drink.id}-${index}-${order.id}`}>
-                              {drink.quantity}x {drink.name}
-                              {selectedOptions.length > 0 && (
+                        {order.drinks.map((drink, index) => (
+                          <li key={index} className="text-sm text-gray-700 flex items-center">
+                            <span className="mr-2 text-gray-500 font-medium">•</span>
+                            <span>
+                              {drink.quantity}x {drink.drink_name}
+                              {(drink.oat_milk || drink.semi_skimmed_milk || drink.caramel_syrup || drink.vanilla_syrup || drink.is_decaf) && (
                                 <span className="text-xs text-gray-500 ml-1">
-                                  ({selectedOptions.join(", ")})
+                                  ({[drink.oat_milk && "Oat Milk", drink.semi_skimmed_milk && "Semi-Skimmed", drink.caramel_syrup && "Caramel", drink.vanilla_syrup && "Vanilla", drink.is_decaf && "Decaf"].filter(Boolean).join(", ")})
                                 </span>
                               )}
-                            </li>
-                          );
-                        })}
+                            </span>
+                          </li>
+                        ))}
                       </ul>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700 font-medium">£{order.total_price.toFixed(2)}</td>
