@@ -96,7 +96,7 @@ export default function AboutPage() {
                 >
                   Pre-order Now for a discount
                 </motion.a>
-              </div>
+        </div>
             </motion.div>
             {/* Right side: Image/Graphic */}
             <motion.div 

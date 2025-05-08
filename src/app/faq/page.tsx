@@ -17,7 +17,7 @@ export default function FAQPage() {
     },
     {
       question: "How do I pre-order?",
-      answer: "You can pre-order through our website's Pre-order page. Select your drinks (customise them too!), specify your pickup time, and provide your name and email. By pre-ordering, your drink preparation will be prioritized when you arrive, allowing you to skip the main queue!",
+      answer: "You can pre-order through our website's Pre-order page. Select your drinks (customise them too!), specify your pickup time, and provide your name and email. By pre-ordering, your drink preparation will be prioritised when you arrive, allowing you to skip the main queue!",
     },
     {
       question: "Is there a discount for pre-ordering?",

@@ -15,7 +15,7 @@ const SPECIALTY_DISCOUNT = 0.20;
 type BaseDrink = {
   id: string;
   name: string;
-  category: "hotCoffee" | "coldDrinks" | "specialtyDrinks";
+  category: "hotCoffee" | "icedCoffee" | "specialtyDrinks";
   price: number; // Store as number
 };
 
@@ -28,6 +28,7 @@ interface CartItem {
   hasCaramelSyrup: boolean;
   hasVanillaSyrup: boolean;
   hasSemiSkimmedMilk: boolean;
+  isDecaf: boolean;
   quantity: number;
   unitPrice: number; // Final price for this specific variant including options and discounts
   originalBasePrice: number; // Base price before any modifications or discounts
@@ -41,6 +42,7 @@ interface CustomizationModalData {
   hasCaramelSyrup: boolean;
   hasVanillaSyrup: boolean;
   hasSemiSkimmedMilk: boolean;
+  isDecaf: boolean;
   quantity: number;
 }
 
@@ -76,9 +78,9 @@ export default function PreorderPage() {
     { id: "flatWhite", name: "Flat White", category: "hotCoffee", price: 3.00 },
     { id: "latte", name: "Latte", category: "hotCoffee", price: 3.00 },
     { id: "cappuccino", name: "Cappuccino", category: "hotCoffee", price: 3.00 },
-    // Cold Drinks
-    { id: "icedLatte", name: "Iced Latte", category: "coldDrinks", price: 3.50 },
-    { id: "icedAmericano", name: "Iced Americano", category: "coldDrinks", price: 3.50 },
+    // Iced Coffee (formerly Cold Drinks)
+    { id: "icedLatte", name: "Iced Latte", category: "icedCoffee", price: 3.50 },
+    { id: "icedAmericano", name: "Iced Americano", category: "icedCoffee", price: 3.50 },
     // Specialty Drinks
     { id: "matchaHot", name: "Matcha (Hot)", category: "specialtyDrinks", price: 4.00 },
     { id: "matchaIced", name: "Matcha (Iced)", category: "specialtyDrinks", price: 4.00 },
@@ -115,7 +117,7 @@ export default function PreorderPage() {
   };
 
   const openCustomizationModal = (drink: BaseDrink) => {
-    setModalData({ drink, oatMilk: false, hasCaramelSyrup: false, hasVanillaSyrup: false, hasSemiSkimmedMilk: false, quantity: 1 });
+    setModalData({ drink, oatMilk: false, hasCaramelSyrup: false, hasVanillaSyrup: false, hasSemiSkimmedMilk: false, isDecaf: false, quantity: 1 });
     setShowCustomizationModal(true);
   };
 
@@ -125,7 +127,7 @@ export default function PreorderPage() {
     }
   };
 
-  const handleModalOptionChange = (option: 'oatMilk' | 'caramelSyrup' | 'vanillaSyrup' | 'semiSkimmedMilk') => {
+  const handleModalOptionChange = (option: 'oatMilk' | 'caramelSyrup' | 'vanillaSyrup' | 'semiSkimmedMilk' | 'isDecaf') => {
     if (modalData) {
       if (option === 'oatMilk') {
         const isAmericano = modalData.drink.id === 'americano' || modalData.drink.id === 'icedAmericano';
@@ -136,6 +138,8 @@ export default function PreorderPage() {
         setModalData({ ...modalData, hasVanillaSyrup: !modalData.hasVanillaSyrup });
       } else if (option === 'semiSkimmedMilk') {
         setModalData({ ...modalData, hasSemiSkimmedMilk: !modalData.hasSemiSkimmedMilk, oatMilk: !modalData.hasSemiSkimmedMilk ? false : modalData.oatMilk });
+      } else if (option === 'isDecaf') {
+        setModalData({ ...modalData, isDecaf: !modalData.isDecaf });
       }
     }
   };
@@ -148,7 +152,8 @@ export default function PreorderPage() {
       !item.hasOatMilk &&
       !item.hasCaramelSyrup &&
       !item.hasVanillaSyrup &&
-      !item.hasSemiSkimmedMilk
+      !item.hasSemiSkimmedMilk &&
+      !item.isDecaf
     );
 
     if (existingItemIndex > -1) {
@@ -164,6 +169,7 @@ export default function PreorderPage() {
         hasCaramelSyrup: false,
         hasVanillaSyrup: false,
         hasSemiSkimmedMilk: false,
+        isDecaf: false,
         quantity: 1,
         unitPrice: unitPrice,
         originalBasePrice: drink.price,
@@ -176,7 +182,7 @@ export default function PreorderPage() {
   const addOrUpdateCartItem = () => {
     if (!modalData) return;
 
-    const { drink, oatMilk, hasCaramelSyrup, hasVanillaSyrup, hasSemiSkimmedMilk, quantity } = modalData;
+    const { drink, oatMilk, hasCaramelSyrup, hasVanillaSyrup, hasSemiSkimmedMilk, isDecaf, quantity } = modalData;
     const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', oatMilk, hasCaramelSyrup, hasVanillaSyrup);
     
     const existingItemIndex = cartItems.findIndex(item => 
@@ -184,7 +190,8 @@ export default function PreorderPage() {
       item.hasOatMilk === oatMilk &&
       item.hasCaramelSyrup === hasCaramelSyrup &&
       item.hasVanillaSyrup === hasVanillaSyrup &&
-      item.hasSemiSkimmedMilk === hasSemiSkimmedMilk
+      item.hasSemiSkimmedMilk === hasSemiSkimmedMilk &&
+      item.isDecaf === isDecaf
     );
 
     if (existingItemIndex > -1) {
@@ -200,6 +207,7 @@ export default function PreorderPage() {
         hasCaramelSyrup: hasCaramelSyrup,
         hasVanillaSyrup: hasVanillaSyrup,
         hasSemiSkimmedMilk: hasSemiSkimmedMilk,
+        isDecaf: isDecaf,
         quantity: quantity,
         unitPrice: unitPrice,
         originalBasePrice: drink.price,
@@ -250,21 +258,19 @@ export default function PreorderPage() {
       name: data.name,
       email: data.email,
       pickup_time: data.pickupTime,
-      drinks: cartItems.map(item => ({ // Transform cart items for Supabase
-        id: item.baseDrinkId, // or item.id if you want the unique cart item ID
-        name: item.baseDrinkName,
-        quantity: item.quantity,
-        options: {
-          oatMilk: item.hasOatMilk,
-          caramelSyrup: item.hasCaramelSyrup,
-          vanillaSyrup: item.hasVanillaSyrup,
-          semiSkimmedMilk: item.hasSemiSkimmedMilk,
-        },
-        unitPrice: item.unitPrice,
-        isSpecialty: item.isSpecialty,
-        originalBasePrice: item.originalBasePrice,
-      })),
       total_price: parseFloat(orderTotal.toFixed(2)),
+      items: cartItems.map(item => ({
+        drink_name: item.baseDrinkName,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        oat_milk: item.hasOatMilk,
+        caramel_syrup: item.hasCaramelSyrup,
+        vanilla_syrup: item.hasVanillaSyrup,
+        semi_skimmed_milk: item.hasSemiSkimmedMilk,
+        is_decaf: item.isDecaf,
+        is_specialty: item.isSpecialty,
+        original_base_price: item.originalBasePrice
+      })),
       is_collected: false, // Default value
     };
     
@@ -311,6 +317,12 @@ export default function PreorderPage() {
     }, {} as Record<BaseDrink['category'], BaseDrink[]>);
   };
   const groupedDrinks = groupDrinksByCategory(availableDrinks);
+  const categoryOrder: Array<BaseDrink['category']> = ['hotCoffee', 'icedCoffee', 'specialtyDrinks'];
+  const categoryDisplayNames: Record<BaseDrink['category'], string> = {
+    hotCoffee: "Hot Coffees",
+    icedCoffee: "Iced Coffees",
+    specialtyDrinks: "Specialty Drinks"
+  };
 
 
   if (orderSuccess) {
@@ -339,7 +351,7 @@ export default function PreorderPage() {
         <AnimatedSection>
           <div className="text-center mb-8 md:mb-12">
             <h1 className="text-4xl font-bold text-white sm:text-5xl sm:tracking-tight">Pre-order Your Drinks</h1>
-            <p className="mt-5 max-w-xl mx-auto text-lg sm:text-xl text-white">Pre-order now to skip the queue! Your drinks will be prioritized when you arrive.</p>
+            <p className="mt-5 max-w-xl mx-auto text-lg sm:text-xl text-white">Pre-order now to skip the queue! Your drinks will be prioritised when you arrive.</p>
             <motion.p 
               className="mt-3 max-w-xl mx-auto text-base sm:text-lg text-yellow-400 font-medium"
               animate={{ scale: [1, 1.03, 1], opacity: [0.7, 1, 0.7] }}
@@ -387,7 +399,7 @@ export default function PreorderPage() {
                         <button
                           type="button"
                           onClick={() => {
-                            const directAddIds = ['espresso', 'icedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
+                            const directAddIds = ['icedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
                             if (directAddIds.includes(drink.id)) {
                               addSimpleItemToCart(drink);
                             } else {
@@ -463,7 +475,7 @@ export default function PreorderPage() {
                             {item.hasCaramelSyrup && <span>Caramel Syrup</span>}
                             {item.hasCaramelSyrup && item.hasVanillaSyrup && <span>, </span>}
                             {item.hasVanillaSyrup && <span>Vanilla Syrup</span>}
-                            {!item.hasOatMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.hasSemiSkimmedMilk && <span>Standard</span>}
+                            {!item.hasOatMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.hasSemiSkimmedMilk && !item.isDecaf && <span>Standard</span>}
                           </div>
                           <p className="text-xs text-primary">Unit Price: £{item.unitPrice.toFixed(2)}</p>
                         </div>
@@ -542,64 +554,89 @@ export default function PreorderPage() {
               </p>
 
               <div className="space-y-3 my-6">
-                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                  <span className="flex items-center">
-                    <span>Use Oat Milk</span>
-                  </span>
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium mr-3 text-primary">+£{OAT_MILK_COST.toFixed(2)}</span>
-                    <input 
-                      type="checkbox" 
-                      checked={modalData.oatMilk}
-                      onChange={() => handleModalOptionChange('oatMilk')}
-                      disabled={modalData.hasSemiSkimmedMilk && (modalData.drink.id === 'americano' || modalData.drink.id === 'icedAmericano')}
-                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                </label>
-                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                  <span className="flex items-center">
-                    <span>Use Semi-Skimmed Milk</span>
-                  </span>
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium mr-3 text-gray-500">(No Charge)</span>
-                    <input 
-                      type="checkbox" 
-                      checked={modalData.hasSemiSkimmedMilk}
-                      onChange={() => handleModalOptionChange('semiSkimmedMilk')}
-                      disabled={modalData.oatMilk}
-                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                </label>
-                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                  <span className="flex items-center">
-                    <span>Add Caramel Syrup</span>
-                  </span>
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
-                    <input 
-                      type="checkbox" 
-                      checked={modalData.hasCaramelSyrup}
-                      onChange={() => handleModalOptionChange('caramelSyrup')}
-                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
-                    />
-                  </div>
-                </label>
-                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                  <span className="flex items-center">
-                    <span>Add Vanilla Syrup</span>
-                  </span>
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
-                    <input 
-                      type="checkbox" 
-                      checked={modalData.hasVanillaSyrup}
-                      onChange={() => handleModalOptionChange('vanillaSyrup')}
-                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
-                    />
-                  </div>
-                </label>
+                {modalData.drink.id !== 'espresso' && (
+                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                    <span className="flex items-center">
+                      <span>Use Oat Milk</span>
+                    </span>
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium mr-3 text-primary">+£{OAT_MILK_COST.toFixed(2)}</span>
+                      <input 
+                        type="checkbox" 
+                        checked={modalData.oatMilk}
+                        onChange={() => handleModalOptionChange('oatMilk')}
+                        disabled={modalData.hasSemiSkimmedMilk && (modalData.drink.id === 'americano' || modalData.drink.id === 'icedAmericano')}
+                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                  </label>
+                )}
+                {modalData.drink.id !== 'espresso' && (
+                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                    <span className="flex items-center">
+                      <span>Use Semi-Skimmed Milk</span>
+                    </span>
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium mr-3 text-gray-500">(No Charge)</span>
+                      <input 
+                        type="checkbox" 
+                        checked={modalData.hasSemiSkimmedMilk}
+                        onChange={() => handleModalOptionChange('semiSkimmedMilk')}
+                        disabled={modalData.oatMilk}
+                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                  </label>
+                )}
+                {modalData.drink.id !== 'espresso' && (
+                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                    <span className="flex items-center">
+                      <span>Add Caramel Syrup</span>
+                    </span>
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
+                      <input 
+                        type="checkbox" 
+                        checked={modalData.hasCaramelSyrup}
+                        onChange={() => handleModalOptionChange('caramelSyrup')}
+                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
+                      />
+                    </div>
+                  </label>
+                )}
+                {modalData.drink.id !== 'espresso' && (
+                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                    <span className="flex items-center">
+                      <span>Add Vanilla Syrup</span>
+                    </span>
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
+                      <input 
+                        type="checkbox" 
+                        checked={modalData.hasVanillaSyrup}
+                        onChange={() => handleModalOptionChange('vanillaSyrup')}
+                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
+                      />
+                    </div>
+                  </label>
+                )}
+                {/* Conditionally render Decaf option */}
+                {(modalData.drink.category === 'hotCoffee' || modalData.drink.category === 'icedCoffee') && (
+                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                    <span className="flex items-center">
+                      <span>Decaf</span>
+                    </span>
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium mr-3 text-primary">No Extra Charge</span>
+                      <input 
+                        type="checkbox" 
+                        checked={modalData.isDecaf}
+                        onChange={() => handleModalOptionChange('isDecaf')}
+                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
+                      />
+                    </div>
+                  </label>
+                )}
               </div>
 
               <div className="flex items-center justify-between mb-6">
