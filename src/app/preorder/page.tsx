@@ -261,7 +261,7 @@ export default function PreorderPage() {
       email: data.email,
       pickup_time: data.pickupTime,
       total_price: parseFloat(orderTotal.toFixed(2)),
-      items: cartItems.map(item => ({
+      drinks: cartItems.map(item => ({
         drink_name: item.baseDrinkName,
         quantity: item.quantity,
         unit_price: item.unitPrice,
