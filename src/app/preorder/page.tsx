@@ -368,54 +368,54 @@ export default function PreorderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
           {/* Left side: Drink Selection */}
           <div className="lg:col-span-2 space-y-8">
-            {Object.entries(groupedDrinks).map(([category, drinksInCategory]) => (
-              <AnimatedSection key={category} className="bg-white rounded-lg p-4 sm:p-6 shadow-md border border-gray-200">
-                <h2 className="text-xl sm:text-2xl font-semibold text-[#1a3328] mb-4 capitalize">
-                  {category.replace(/([A-Z])/g, ' $1').trim()} 
-                  {/* {category === 'specialtyDrinks' && <span className="text-sm text-primary font-normal"> (20p off base price)</span>} */}
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {drinksInCategory.map((drink) => {
-                    const isSpecialty = drink.category === 'specialtyDrinks';
-                    const discountedPrice = isSpecialty ? drink.price - SPECIALTY_DISCOUNT : drink.price;
-                    return (
-                      <motion.div 
-                        key={drink.id}
-                        className="border border-gray-200 rounded-md p-3 hover:shadow-lg transition-shadow duration-200 flex items-center justify-between"
-                        whileHover={{ scale: 1.02 }}
-                      >
-                        <div className="flex-grow">
-                          <h3 className="font-medium text-[#1a3328] text-base sm:text-lg">{drink.name}</h3>
-                          {isSpecialty ? (
-                            <div className="mt-1">
-                              <span className="text-xs text-gray-500 line-through mr-2">£{drink.price.toFixed(2)}</span>
-                              <span className="text-sm font-bold text-yellow-600">£{discountedPrice.toFixed(2)}</span>
-                               {/* <p className="text-xs text-yellow-600 mt-0.5">Save 20p with pre-order!</p> */}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-gray-600 mt-1">Price: £{drink.price.toFixed(2)}</p>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const directAddIds = ['icedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
-                            if (directAddIds.includes(drink.id)) {
-                              addSimpleItemToCart(drink);
-                            } else {
-                              openCustomizationModal(drink);
-                            }
-                          }}
-                          className="ml-2 p-2 bg-primary-light hover:bg-primary text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 flex-shrink-0"
-                          aria-label={`Customize and add ${drink.name}`}
+            {categoryOrder.map(categoryKey => (
+              groupedDrinks[categoryKey] && groupedDrinks[categoryKey].length > 0 && (
+                <AnimatedSection key={categoryKey} className="bg-white rounded-lg p-4 sm:p-6 shadow-md border border-gray-200">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-[#1a3328] mb-4">
+                    {categoryDisplayNames[categoryKey]}
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {groupedDrinks[categoryKey].map((drink) => {
+                      const isSpecialty = drink.category === 'specialtyDrinks';
+                      const discountedPrice = isSpecialty ? drink.price - SPECIALTY_DISCOUNT : drink.price;
+                      return (
+                        <motion.div 
+                          key={drink.id}
+                          className="border border-gray-200 rounded-md p-3 hover:shadow-lg transition-shadow duration-200 flex items-center justify-between"
+                          whileHover={{ scale: 1.02 }}
                         >
-                          <PlusIcon className="h-5 w-5 text-gray-800" />
-                        </button>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </AnimatedSection>
+                          <div className="flex-grow">
+                            <h3 className="font-medium text-[#1a3328] text-base sm:text-lg">{drink.name}</h3>
+                            {isSpecialty ? (
+                              <div className="mt-1">
+                                <span className="text-xs text-gray-500 line-through mr-2">£{drink.price.toFixed(2)}</span>
+                                <span className="text-sm font-bold text-yellow-600">£{discountedPrice.toFixed(2)}</span>
+                              </div>
+                            ) : (
+                              <p className="text-sm text-gray-600 mt-1">Price: £{drink.price.toFixed(2)}</p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const directAddIds = ['icedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
+                              if (directAddIds.includes(drink.id)) {
+                                addSimpleItemToCart(drink);
+                              } else {
+                                openCustomizationModal(drink);
+                              }
+                            }}
+                            className="ml-2 p-2 bg-primary-light hover:bg-primary text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 flex-shrink-0"
+                            aria-label={`Customize and add ${drink.name}`}
+                          >
+                            <PlusIcon className="h-5 w-5 text-gray-800" />
+                          </button>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </AnimatedSection>
+              )
             ))}
           </div>
 
