@@ -396,7 +396,7 @@ export default function PreorderPage() {
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-medium text-[#1a3328]">Total</h3>
-                  <p className="text-xl font-semibold text-primary">£{orderTotal.toFixed(2)}</p>
+                  <p className="text-xl font-semibold text-black">£{orderTotal.toFixed(2)}</p>
                 </div>
                 <p className="mt-1 text-sm text-gray-600">Payment will be collected upon pickup.</p>
               </div>
