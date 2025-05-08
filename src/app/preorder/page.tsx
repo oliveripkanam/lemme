@@ -27,6 +27,7 @@ interface CartItem {
   hasOatMilk: boolean;
   hasCaramelSyrup: boolean;
   hasVanillaSyrup: boolean;
+  hasSemiSkimmedMilk: boolean;
   quantity: number;
   unitPrice: number; // Final price for this specific variant including options and discounts
   originalBasePrice: number; // Base price before any modifications or discounts
@@ -39,6 +40,7 @@ interface CustomizationModalData {
   oatMilk: boolean;
   hasCaramelSyrup: boolean;
   hasVanillaSyrup: boolean;
+  hasSemiSkimmedMilk: boolean;
   quantity: number;
 }
 
@@ -113,7 +115,7 @@ export default function PreorderPage() {
   };
 
   const openCustomizationModal = (drink: BaseDrink) => {
-    setModalData({ drink, oatMilk: false, hasCaramelSyrup: false, hasVanillaSyrup: false, quantity: 1 });
+    setModalData({ drink, oatMilk: false, hasCaramelSyrup: false, hasVanillaSyrup: false, hasSemiSkimmedMilk: false, quantity: 1 });
     setShowCustomizationModal(true);
   };
 
@@ -123,30 +125,66 @@ export default function PreorderPage() {
     }
   };
 
-  const handleModalOptionChange = (option: 'oatMilk' | 'caramelSyrup' | 'vanillaSyrup') => {
+  const handleModalOptionChange = (option: 'oatMilk' | 'caramelSyrup' | 'vanillaSyrup' | 'semiSkimmedMilk') => {
     if (modalData) {
       if (option === 'oatMilk') {
-        setModalData({ ...modalData, oatMilk: !modalData.oatMilk });
+        const isAmericano = modalData.drink.id === 'americano' || modalData.drink.id === 'icedAmericano';
+        setModalData({ ...modalData, oatMilk: !modalData.oatMilk, hasSemiSkimmedMilk: isAmericano && !modalData.oatMilk ? false : modalData.hasSemiSkimmedMilk });
       } else if (option === 'caramelSyrup') {
         setModalData({ ...modalData, hasCaramelSyrup: !modalData.hasCaramelSyrup });
       } else if (option === 'vanillaSyrup') {
         setModalData({ ...modalData, hasVanillaSyrup: !modalData.hasVanillaSyrup });
+      } else if (option === 'semiSkimmedMilk') {
+        setModalData({ ...modalData, hasSemiSkimmedMilk: !modalData.hasSemiSkimmedMilk, oatMilk: !modalData.hasSemiSkimmedMilk ? false : modalData.oatMilk });
       }
     }
   };
   
+  const addSimpleItemToCart = (drink: BaseDrink) => {
+    const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', false, false, false);
+
+    const existingItemIndex = cartItems.findIndex(item => 
+      item.baseDrinkId === drink.id &&
+      !item.hasOatMilk &&
+      !item.hasCaramelSyrup &&
+      !item.hasVanillaSyrup &&
+      !item.hasSemiSkimmedMilk
+    );
+
+    if (existingItemIndex > -1) {
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex].quantity += 1;
+      setCartItems(updatedCartItems);
+    } else {
+      const newItem: CartItem = {
+        id: generateUniqueId(),
+        baseDrinkId: drink.id,
+        baseDrinkName: drink.name,
+        hasOatMilk: false,
+        hasCaramelSyrup: false,
+        hasVanillaSyrup: false,
+        hasSemiSkimmedMilk: false,
+        quantity: 1,
+        unitPrice: unitPrice,
+        originalBasePrice: drink.price,
+        isSpecialty: drink.category === 'specialtyDrinks'
+      };
+      setCartItems(prevCart => [...prevCart, newItem]);
+    }
+  };
+
   const addOrUpdateCartItem = () => {
     if (!modalData) return;
 
-    const { drink, oatMilk, hasCaramelSyrup, hasVanillaSyrup, quantity } = modalData;
+    const { drink, oatMilk, hasCaramelSyrup, hasVanillaSyrup, hasSemiSkimmedMilk, quantity } = modalData;
     const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', oatMilk, hasCaramelSyrup, hasVanillaSyrup);
     
-    // Check if an identical item already exists
     const existingItemIndex = cartItems.findIndex(item => 
       item.baseDrinkId === drink.id &&
       item.hasOatMilk === oatMilk &&
       item.hasCaramelSyrup === hasCaramelSyrup &&
-      item.hasVanillaSyrup === hasVanillaSyrup
+      item.hasVanillaSyrup === hasVanillaSyrup &&
+      item.hasSemiSkimmedMilk === hasSemiSkimmedMilk
     );
 
     if (existingItemIndex > -1) {
@@ -161,6 +199,7 @@ export default function PreorderPage() {
         hasOatMilk: oatMilk,
         hasCaramelSyrup: hasCaramelSyrup,
         hasVanillaSyrup: hasVanillaSyrup,
+        hasSemiSkimmedMilk: hasSemiSkimmedMilk,
         quantity: quantity,
         unitPrice: unitPrice,
         originalBasePrice: drink.price,
@@ -219,6 +258,7 @@ export default function PreorderPage() {
           oatMilk: item.hasOatMilk,
           caramelSyrup: item.hasCaramelSyrup,
           vanillaSyrup: item.hasVanillaSyrup,
+          semiSkimmedMilk: item.hasSemiSkimmedMilk,
         },
         unitPrice: item.unitPrice,
         isSpecialty: item.isSpecialty,
@@ -346,7 +386,14 @@ export default function PreorderPage() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => openCustomizationModal(drink)}
+                          onClick={() => {
+                            const directAddIds = ['espresso', 'icedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
+                            if (directAddIds.includes(drink.id)) {
+                              addSimpleItemToCart(drink);
+                            } else {
+                              openCustomizationModal(drink);
+                            }
+                          }}
                           className="ml-2 p-2 bg-primary-light hover:bg-primary text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 flex-shrink-0"
                           aria-label={`Customize and add ${drink.name}`}
                         >
@@ -410,11 +457,13 @@ export default function PreorderPage() {
                           <h4 className="font-semibold text-[#1a3328]">{item.baseDrinkName}</h4>
                           <div className="text-xs text-gray-600">
                             {item.hasOatMilk && <span>Oat Milk</span>}
-                            {(item.hasOatMilk && (item.hasCaramelSyrup || item.hasVanillaSyrup)) && <span>, </span>}
+                            {(item.hasOatMilk && (item.hasCaramelSyrup || item.hasVanillaSyrup || item.hasSemiSkimmedMilk)) && <span>, </span>}
+                            {item.hasSemiSkimmedMilk && <span>Semi-Skimmed Milk</span>}
+                            {(item.hasSemiSkimmedMilk && (item.hasCaramelSyrup || item.hasVanillaSyrup)) && <span>, </span>}
                             {item.hasCaramelSyrup && <span>Caramel Syrup</span>}
                             {item.hasCaramelSyrup && item.hasVanillaSyrup && <span>, </span>}
                             {item.hasVanillaSyrup && <span>Vanilla Syrup</span>}
-                            {!item.hasOatMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && <span>Standard</span>}
+                            {!item.hasOatMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.hasSemiSkimmedMilk && <span>Standard</span>}
                           </div>
                           <p className="text-xs text-primary">Unit Price: £{item.unitPrice.toFixed(2)}</p>
                         </div>
@@ -454,6 +503,8 @@ export default function PreorderPage() {
                   <li>Confirmation email will be sent within 2 business days.</li>
                   <li>We&apos;ll send you a reminder email a week before and a day before June 3rd (the trading day).</li>
                   <li>You don&apos;t need to pay now; payment will be collected at the store on June 3rd.</li>
+                  <li>We&apos;ll prepare your drink fresh when you arrive at the store.</li>
+                  <li>All standard dairy milk used is semi-skimmed.</li>
                 </ul>
               </div>
             </AnimatedSection>
@@ -501,7 +552,23 @@ export default function PreorderPage() {
                       type="checkbox" 
                       checked={modalData.oatMilk}
                       onChange={() => handleModalOptionChange('oatMilk')}
-                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
+                      disabled={modalData.hasSemiSkimmedMilk && (modalData.drink.id === 'americano' || modalData.drink.id === 'icedAmericano')}
+                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                </label>
+                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <span className="flex items-center">
+                    <span>Use Semi-Skimmed Milk</span>
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium mr-3 text-gray-500">(No Charge)</span>
+                    <input 
+                      type="checkbox" 
+                      checked={modalData.hasSemiSkimmedMilk}
+                      onChange={() => handleModalOptionChange('semiSkimmedMilk')}
+                      disabled={modalData.oatMilk}
+                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </label>
