@@ -474,8 +474,17 @@ export default function PreorderPage() {
                             {item.hasSemiSkimmedMilk && <div className="block">Semi-Skimmed Milk</div>}
                             {item.hasCaramelSyrup && <div className="block">Caramel Syrup</div>}
                             {item.hasVanillaSyrup && <div className="block">Vanilla Syrup</div>}
-                            {(!item.hasOatMilk && !item.hasSemiSkimmedMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.isDecaf && (item.baseDrinkId === 'espresso' || item.baseDrinkId === 'americano' || item.baseDrinkId === 'icedAmericano')) && <div className="block">Black</div>}
-                            {(!item.hasOatMilk && !item.hasSemiSkimmedMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.isDecaf && !['espresso', 'americano', 'icedAmericano'].includes(item.baseDrinkId)) && <div className="block">Standard Milk</div>}
+                            {(() => {
+                              const nonMilkSpecialtyTeaIds = ['hkIcedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
+                              if (!nonMilkSpecialtyTeaIds.includes(item.baseDrinkId)) {
+                                if (!item.hasOatMilk && !item.hasSemiSkimmedMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.isDecaf && (item.baseDrinkId === 'espresso' || item.baseDrinkId === 'americano' || item.baseDrinkId === 'icedAmericano')) {
+                                  return <div className="block">Black</div>;
+                                } else if (!item.hasOatMilk && !item.hasSemiSkimmedMilk && !item.hasCaramelSyrup && !item.hasVanillaSyrup && !item.isDecaf) {
+                                  return <div className="block">Semi-Skimmed Milk</div>;
+                                }
+                              }
+                              return null; // Return null if no specific description applies
+                            })()}
                           </div>
                           <p className="text-xs text-primary mt-1">Unit Price: £{item.unitPrice.toFixed(2)}</p>
                         </div>
