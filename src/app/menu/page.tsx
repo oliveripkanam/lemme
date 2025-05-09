@@ -156,6 +156,26 @@ export default function MenuPage() {
           >
             Japanese-inspired specialty drinks with simple, transparent pricing.
           </motion.p>
+          {/* New button to view menu image */}
+          <motion.div 
+            className="mt-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <motion.a
+              href="/images/menu.png" // Path to your menu image in public/images/
+              target="_blank" // Open in a new tab
+              rel="noopener noreferrer" // Security best practice for target="_blank"
+              className="border-2 border-white text-white font-bold py-4 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:bg-white/10 focus:outline-none focus:ring-0"
+              // Removed specific focus:ring-white, focus:ring-offset-2, focus:ring-offset-black/50
+              // Added focus:ring-0 to attempt to remove the focus ring visually
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+            >
+              View Full Menu (Image)
+            </motion.a>
+          </motion.div>
         </div>
       </div>
 
@@ -224,7 +244,7 @@ export default function MenuPage() {
                     </div>
                     
                     {item.description && category.id === "specialty-drinks" && (
-                       <p className="text-xs text-yellow-500 mt-1 text-right font-medium">{item.description}</p>
+                       <p className="text-base text-yellow-600 mt-1 text-right font-medium">{item.description}</p>
                     )}
                   </div>
                 </motion.div>
