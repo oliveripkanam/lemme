@@ -17,7 +17,7 @@ export default function FAQPage() {
     },
     {
       question: "How do I pre-order?",
-      answer: "You can pre-order through our website's Pre-order page. Select your drinks (customise them too!), specify your pickup time, and provide your name and email. By pre-ordering, your drink preparation will be prioritised when you arrive, allowing you to skip the main queue!",
+      answer: "You can pre-order through our website's Pre-order page. Select your drinks (and any customisations), specify your pickup time, and provide your name and email. By pre-ordering, your drink preparation will be prioritised when you arrive, allowing you to skip the main queue!",
     },
     {
       question: "Is there a discount for pre-ordering?",
@@ -25,7 +25,7 @@ export default function FAQPage() {
     },
     {
       question: "What are your operating hours for the pop-up?",
-      answer: "We will be open from 10:00 AM to 4:00 PM on June 3rd, 2025.",
+      answer: "We open from 10:00 AM to 4:00 PM on June 3rd, 2025.",
     },
     {
       question: "What payment methods do you accept?",
