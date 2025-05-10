@@ -84,7 +84,7 @@ export default function MenuPage() {
         },
         { 
           id: "iced-lemon-tea", 
-          name: "Hong Kong Styled Iced Lemon Tea",
+          name: "Hong Kong Style Iced Lemon Tea",
           price: "£4.00", 
           discountedPrice: "£3.80",
           description: "Save 20p with pre-order!",
@@ -270,11 +270,11 @@ export default function MenuPage() {
           <ul className="space-y-4 text-beige-light text-lg">
             <li className="flex items-start">
               <CubeTransparentIcon className="h-6 w-6 text-primary-light mr-3 flex-shrink-0 mt-1" />
-              <span>Have allergies or dietary concerns? Please inform our friendly staff before ordering on the event day for assistance.</span>
+              <span>Any allergies or dietary concerns? Please inform our friendly staff before ordering on the event day for assistance.</span>
             </li>
             <li className="flex items-start">
               <ArrowPathRoundedSquareIcon className="h-6 w-6 text-primary-light mr-3 flex-shrink-0 mt-1" />
-              <span>Bring your own reusable cup for a 20p discount on any drink, helping us significantly reduce waste together!</span>
+              <span>Bring your own reusable cup for a 20p discount on any drink, it will help us significantly reduce waste together!</span>
             </li>
             <li className="flex items-start">
               <TicketIcon className="h-6 w-6 text-primary-light mr-3 flex-shrink-0 mt-1" />

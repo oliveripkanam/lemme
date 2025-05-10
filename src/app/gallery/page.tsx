@@ -32,7 +32,7 @@ export default function GalleryPage() { // Renamed function
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Look delicious? Pre-order now!
+            Looks delicious? Pre-order now!
           </motion.a>
         </Link>
       </motion.div>

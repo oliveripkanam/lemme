@@ -13,7 +13,7 @@ export default function FAQPage() {
     },
     {
       question: "What kind of drinks do you offer?",
-      answer: "We specialize in Japanese-inspired drinks such as Matcha and Hojicha lattes, Yuzu and Genmaicha teas, alongside classic hot coffees and refreshing iced beverages. Check out our full Menu page!",
+      answer: "We specialise in Japanese-inspired drinks such as Matcha and Hojicha lattes, Yuzu and Genmaicha teas, alongside classic hot coffee and refreshing iced beverages. Check out our full Menu page!",
     },
     {
       question: "How do I pre-order?",
@@ -67,6 +67,10 @@ export default function FAQPage() {
       title: "Event Cancellation",
       content: "In the unlikely event of cancellation due to circumstances beyond our control, we will notify all customers who have pre-ordered and provide full refunds if applicable."
     },
+    {
+      title: "Promotional Offers",
+      content: "Promotions cannot be used in conjunction with one another."
+    }
   ];
 
   const [activeTab, setActiveTab] = useState<"faq" | "terms">("faq");

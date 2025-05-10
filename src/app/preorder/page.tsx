@@ -86,7 +86,7 @@ export default function PreorderPage() {
     { id: "matchaIced", name: "Matcha (Iced)", category: "specialtyDrinks", price: 4.00 },
     { id: "hojichaHot", name: "Hojicha (Hot)", category: "specialtyDrinks", price: 4.00 },
     { id: "hojichaIced", name: "Hojicha (Iced)", category: "specialtyDrinks", price: 4.00 },
-    { id: "hkIcedLemonTea", name: "Hong Kong Styled Iced Lemon Tea", category: "specialtyDrinks", price: 4.00 },
+    { id: "hkIcedLemonTea", name: "Hong Kong Style Iced Lemon Tea", category: "specialtyDrinks", price: 4.00 },
     { id: "yuzuTeaHot", name: "Yuzu Tea (Hot)", category: "specialtyDrinks", price: 4.00 },
     { id: "yuzuTeaIced", name: "Yuzu Tea (Iced)", category: "specialtyDrinks", price: 4.00 },
     { id: "genmaichaHot", name: "Genmaicha (Hot)", category: "specialtyDrinks", price: 4.00 },
@@ -321,8 +321,8 @@ export default function PreorderPage() {
   const groupedDrinks = groupDrinksByCategory(availableDrinks);
   const categoryOrder: Array<BaseDrink['category']> = ['hotCoffee', 'icedCoffee', 'specialtyDrinks'];
   const categoryDisplayNames: Record<BaseDrink['category'], string> = {
-    hotCoffee: "Hot Coffees",
-    icedCoffee: "Iced Coffees",
+    hotCoffee: "Hot Coffee",
+    icedCoffee: "Iced Coffee",
     specialtyDrinks: "Specialty Drinks"
   };
 
@@ -586,7 +586,7 @@ export default function PreorderPage() {
                     <span>Use Semi-Skimmed Milk</span>
                   </span>
                   <div className="flex items-center">
-                    <span className="text-sm font-medium mr-3 text-gray-500">(No Charge)</span>
+                    <span className="text-sm font-medium mr-3 text-black-500">No Extra Charge</span>
                     <input 
                       type="checkbox" 
                       checked={modalData.hasSemiSkimmedMilk}
