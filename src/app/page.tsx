@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from 'next/link';
 import AnimatedSection from "@/components/AnimatedSection";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 
@@ -73,30 +74,36 @@ export default function AboutPage() {
                 A distinctive Japanese-inspired specialty drinks café, serving the Bath community for one day only.
               </p>
               <div className="flex flex-col items-center md:items-center">
-                <motion.a
-                  href="/preorder" 
-                  className="border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#2e5937]"
-                  animate={{ 
-                    scale: [1, 1.02, 1] // Continuous pulsing scale when not hovered
-                  }}
-                  whileHover={{
-                    scale: 1, // Set scale to 1 on hover, stopping the pulse
-                    rotate: [0, -2.5, 2.5, -2.5, 2.5, 0], // Shake sequence ending level
-                    backgroundColor: "rgba(255, 255, 255, 0.1)"
-                  }}
-                  transition={{
-                    // Transition for the continuous scale animation (animate prop)
-                    scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }, 
-                    // Removed default spring type to allow smoother transition to hover scale
-                    // Specific transition for the rotate animation in whileHover
-                    rotate: { duration: 0.4, ease: "easeInOut" }, 
-                    // Specific transition for backgroundColor in whileHover
-                    backgroundColor: { duration: 0.1, ease: "easeIn" } 
-                  }}
-                >
-                  Pre-order Now for a discount
-                </motion.a>
-        </div>
+                <AnimatedSection delay={0.5}>
+                  <div className="mt-3 mb-12 text-center">
+                    <div className="flex flex-row items-start justify-center gap-x-6 gap-y-4">
+                      <div className="flex flex-col items-center">
+                        <motion.a
+                          href="/preorder"
+                          className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-lg shadow-md focus:outline-none focus:ring-0"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          Pre-order Now
+                        </motion.a>
+                        <div className="mt-2 text-yellow-400 text-sm font-medium">
+                          ✨ get a discount ✨
+                        </div>
+                      </div>
+
+                      <Link href="/menu" passHref legacyBehavior>
+                        <motion.a
+                          className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-lg shadow-md focus:outline-none focus:ring-0"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          View Our Menu
+                        </motion.a>
+                      </Link>
+                    </div>
+                  </div>
+                </AnimatedSection>
+              </div>
             </motion.div>
             {/* Right side: Image/Graphic */}
             <motion.div 
@@ -143,16 +150,16 @@ export default function AboutPage() {
               {/* When Section */}
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-primary-dark mb-1">When</h3>
-                <p className="text-gray-800 text-sm">June 3rd, 2025</p>
-                <p className="text-gray-800 text-sm">10:00 AM - 4:00 PM</p>
+                <p className="text-gray-800 text-lg">June 3rd, 2025</p>
+                <p className="text-gray-800 text-lg">10:00 AM - 4:00 PM</p>
               </div>
               {/* Separator for medium screens and up - optional */}
               <div className="hidden sm:block h-16 w-px bg-primary-dark/30"></div>
               {/* Where Section */}
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-primary-dark mb-1">Where</h3>
-                <p className="text-gray-800 text-sm">22C New Bond Street, Bath, BA1 1BA</p>
-                <p className="text-gray-800 text-sm">(30 seconds walk from Waitrose)</p>
+                <p className="text-gray-800 text-lg">22C New Bond Street, Bath, BA1 1BA</p>
+                <p className="text-gray-800 text-lg">(30 seconds walk from Waitrose)</p>
               </div>
             </div>
           </div>
