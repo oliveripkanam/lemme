@@ -361,7 +361,7 @@ export default function PreorderPage() {
             >
               ✨ Plus, get 20p off all specialty drinks! (Base price) ✨
             </motion.p>
-            <p className="mt-4 max-w-xl mx-auto text-sm text-yellow-300">
+             <p className="mt-4 max-w-xl mx-auto text-sm text-yellow-300">
               Oat Milk: +£{OAT_MILK_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Caramel Syrup: +£{SYRUP_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Vanilla Syrup: +£{SYRUP_COST.toFixed(2)}
             </p>
           </div>
@@ -375,48 +375,48 @@ export default function PreorderPage() {
                 <AnimatedSection key={categoryKey} className="bg-white rounded-lg p-4 sm:p-6 shadow-md border border-gray-200">
                   <h2 className="text-xl sm:text-2xl font-semibold text-[#1a3328] mb-4">
                     {categoryDisplayNames[categoryKey]}
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {groupedDrinks[categoryKey].map((drink) => {
-                      const isSpecialty = drink.category === 'specialtyDrinks';
-                      const discountedPrice = isSpecialty ? drink.price - SPECIALTY_DISCOUNT : drink.price;
-                      return (
-                        <motion.div 
-                          key={drink.id}
-                          className="border border-gray-200 rounded-md p-3 hover:shadow-lg transition-shadow duration-200 flex items-center justify-between"
-                          whileHover={{ scale: 1.02 }}
-                        >
-                          <div className="flex-grow">
-                            <h3 className="font-medium text-[#1a3328] text-base sm:text-lg">{drink.name}</h3>
-                            {isSpecialty ? (
-                              <div className="mt-1">
-                                <span className="text-xs text-gray-500 line-through mr-2">£{drink.price.toFixed(2)}</span>
-                                <span className="text-sm font-bold text-yellow-600">£{discountedPrice.toFixed(2)}</span>
-                              </div>
-                            ) : (
-                              <p className="text-sm text-gray-600 mt-1">Price: £{drink.price.toFixed(2)}</p>
-                            )}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => {
+                    const isSpecialty = drink.category === 'specialtyDrinks';
+                    const discountedPrice = isSpecialty ? drink.price - SPECIALTY_DISCOUNT : drink.price;
+                    return (
+                      <motion.div 
+                        key={drink.id}
+                        className="border border-gray-200 rounded-md p-3 hover:shadow-lg transition-shadow duration-200 flex items-center justify-between"
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <div className="flex-grow">
+                          <h3 className="font-medium text-[#1a3328] text-base sm:text-lg">{drink.name}</h3>
+                          {isSpecialty ? (
+                            <div className="mt-1">
+                              <span className="text-xs text-gray-500 line-through mr-2">£{drink.price.toFixed(2)}</span>
+                              <span className="text-sm font-bold text-yellow-600">£{discountedPrice.toFixed(2)}</span>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-600 mt-1">Price: £{drink.price.toFixed(2)}</p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
                               const directAddIds = ['hkIcedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
-                              if (directAddIds.includes(drink.id)) {
-                                addSimpleItemToCart(drink);
-                              } else {
-                                openCustomizationModal(drink);
-                              }
-                            }}
-                            className="ml-2 p-2 bg-primary-light hover:bg-primary text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 flex-shrink-0"
-                            aria-label={`Customize and add ${drink.name}`}
-                          >
-                            <PlusIcon className="h-5 w-5 text-gray-800" />
-                          </button>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </AnimatedSection>
+                            if (directAddIds.includes(drink.id)) {
+                              addSimpleItemToCart(drink);
+                            } else {
+                              openCustomizationModal(drink);
+                            }
+                          }}
+                          className="ml-2 p-2 bg-primary-light hover:bg-primary text-white rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 flex-shrink-0"
+                          aria-label={`Customize and add ${drink.name}`}
+                        >
+                          <PlusIcon className="h-5 w-5 text-gray-800" />
+                        </button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </AnimatedSection>
               )
             ))}
           </div>
@@ -564,70 +564,70 @@ export default function PreorderPage() {
 
               <div className="space-y-3 my-6">
                 {modalData.drink.id !== 'espresso' && (
-                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                    <span className="flex items-center">
-                      <span>Use Oat Milk</span>
-                    </span>
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium mr-3 text-primary">+£{OAT_MILK_COST.toFixed(2)}</span>
-                      <input 
-                        type="checkbox" 
-                        checked={modalData.oatMilk}
-                        onChange={() => handleModalOptionChange('oatMilk')}
-                        disabled={modalData.hasSemiSkimmedMilk && (modalData.drink.id === 'americano' || modalData.drink.id === 'icedAmericano')}
-                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                      />
-                    </div>
-                  </label>
+                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <span className="flex items-center">
+                    <span>Use Oat Milk</span>
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium mr-3 text-primary">+£{OAT_MILK_COST.toFixed(2)}</span>
+                    <input 
+                      type="checkbox" 
+                      checked={modalData.oatMilk}
+                      onChange={() => handleModalOptionChange('oatMilk')}
+                      disabled={modalData.hasSemiSkimmedMilk && (modalData.drink.id === 'americano' || modalData.drink.id === 'icedAmericano')}
+                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                </label>
                 )}
                 {modalData.drink.id !== 'espresso' && (
-                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                    <span className="flex items-center">
-                      <span>Use Semi-Skimmed Milk</span>
-                    </span>
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium mr-3 text-gray-500">(No Charge)</span>
-                      <input 
-                        type="checkbox" 
-                        checked={modalData.hasSemiSkimmedMilk}
-                        onChange={() => handleModalOptionChange('semiSkimmedMilk')}
-                        disabled={modalData.oatMilk}
-                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                      />
-                    </div>
-                  </label>
+                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <span className="flex items-center">
+                    <span>Use Semi-Skimmed Milk</span>
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium mr-3 text-gray-500">(No Charge)</span>
+                    <input 
+                      type="checkbox" 
+                      checked={modalData.hasSemiSkimmedMilk}
+                      onChange={() => handleModalOptionChange('semiSkimmedMilk')}
+                      disabled={modalData.oatMilk}
+                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                </label>
                 )}
                 {modalData.drink.id !== 'espresso' && (
-                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                    <span className="flex items-center">
-                      <span>Add Caramel Syrup</span>
-                    </span>
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
-                      <input 
-                        type="checkbox" 
-                        checked={modalData.hasCaramelSyrup}
-                        onChange={() => handleModalOptionChange('caramelSyrup')}
-                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
-                      />
-                    </div>
-                  </label>
+                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <span className="flex items-center">
+                    <span>Add Caramel Syrup</span>
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
+                    <input 
+                      type="checkbox" 
+                      checked={modalData.hasCaramelSyrup}
+                      onChange={() => handleModalOptionChange('caramelSyrup')}
+                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
+                    />
+                  </div>
+                </label>
                 )}
                 {modalData.drink.id !== 'espresso' && (
-                  <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                    <span className="flex items-center">
-                      <span>Add Vanilla Syrup</span>
-                    </span>
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
-                      <input 
-                        type="checkbox" 
-                        checked={modalData.hasVanillaSyrup}
-                        onChange={() => handleModalOptionChange('vanillaSyrup')}
-                        className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
-                      />
-                    </div>
-                  </label>
+                <label className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <span className="flex items-center">
+                    <span>Add Vanilla Syrup</span>
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium mr-3 text-primary">+£{SYRUP_COST.toFixed(2)}</span>
+                    <input 
+                      type="checkbox" 
+                      checked={modalData.hasVanillaSyrup}
+                      onChange={() => handleModalOptionChange('vanillaSyrup')}
+                      className="form-checkbox h-5 w-5 text-primary rounded focus:ring-primary-light border-gray-300"
+                    />
+                  </div>
+                </label>
                 )}
                 {/* Conditionally render Decaf option */}
                 {(modalData.drink.category === 'hotCoffee' || modalData.drink.category === 'icedCoffee') && (

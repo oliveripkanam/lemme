@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { CubeTransparentIcon, ArrowPathRoundedSquareIcon, TicketIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 type MenuItem = {
   id: string;
@@ -156,25 +157,35 @@ export default function MenuPage() {
           >
             Japanese-inspired specialty drinks with simple, transparent pricing.
           </motion.p>
-          {/* New button to view menu image */}
+          {/* Container for the two buttons */}
           <motion.div 
-            className="mt-8"
+            className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <motion.a
-              href="/images/menu.png" // Path to your menu image in public/images/
-              target="_blank" // Open in a new tab
-              rel="noopener noreferrer" // Security best practice for target="_blank"
-              className="border-2 border-white text-white font-bold py-4 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:bg-white/10 focus:outline-none focus:ring-0"
-              // Removed specific focus:ring-white, focus:ring-offset-2, focus:ring-offset-black/50
-              // Added focus:ring-0 to attempt to remove the focus ring visually
-              whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-            >
-              View Full Menu (Image)
-            </motion.a>
+            {/* Button 1: View Full Menu */}
+            <Link href="/images/menu.png" passHref legacyBehavior>
+              <motion.a
+                className="bg-transparent border-2 border-white text-white font-bold py-5 px-6 rounded-lg hover:bg-white hover:text-primary transition-colors duration-300 text-base sm:text-lg shadow-md focus:outline-none focus:ring-0"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                View Full Menu
+              </motion.a>
+            </Link>
+            {/* Button 2: View Our Images! */}
+            <Link href="/gallery" passHref legacyBehavior>
+              <motion.a
+                className="bg-transparent border-2 border-white text-white font-bold py-5 px-6 rounded-lg hover:bg-white hover:text-primary transition-colors duration-300 text-base sm:text-lg shadow-md focus:outline-none focus:ring-0"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                View Our Images!
+              </motion.a>
+            </Link>
           </motion.div>
         </div>
       </div>
