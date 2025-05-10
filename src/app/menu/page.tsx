@@ -159,7 +159,7 @@ export default function MenuPage() {
           </motion.p>
           {/* Container for the two buttons */}
           <motion.div 
-            className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6"
+            className="mt-8 flex flex-row justify-center items-center gap-4 md:gap-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
