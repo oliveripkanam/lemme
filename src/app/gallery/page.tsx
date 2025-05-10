@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Link from 'next/link'; // Import Link for client-side navigation
-import { XMarkIcon } from '@heroicons/react/24/solid'; // Import XMarkIcon
 
 export default function GalleryPage() { // Renamed function
   const imageNumbers = Array.from({ length: 6 }, (_, i) => i + 5); // Generates numbers 5 through 10
