@@ -167,7 +167,7 @@ export default function MenuPage() {
             {/* Button 1: View Full Menu */}
             <Link href="/images/menuupdated.png" passHref legacyBehavior>
               <motion.a
-                className="bg-transparent border-2 border-white text-white font-bold py-5 px-6 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-base sm:text-lg shadow-md focus:outline-none focus:ring-0"
+                className="bg-transparent border-2 border-white text-white font-bold py-5 px-3 sm:px-6 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-sm sm:text-lg shadow-md focus:outline-none focus:ring-0"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
@@ -179,7 +179,7 @@ export default function MenuPage() {
             {/* Button 2: View Our Images! */}
             <Link href="/gallery" passHref legacyBehavior>
               <motion.a
-                className="bg-transparent border-2 border-white text-white font-bold py-5 px-6 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-base sm:text-lg shadow-md focus:outline-none focus:ring-0"
+                className="bg-transparent border-2 border-white text-white font-bold py-5 px-3 sm:px-6 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-sm sm:text-lg shadow-md focus:outline-none focus:ring-0"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

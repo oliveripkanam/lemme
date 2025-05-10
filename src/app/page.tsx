@@ -80,7 +80,7 @@ export default function AboutPage() {
                       <div className="flex flex-col items-center">
                         <motion.a
                           href="/preorder"
-                          className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-lg shadow-md focus:outline-none focus:ring-0"
+                          className="bg-transparent border-2 border-white text-white font-bold py-3 px-4 sm:px-8 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-base sm:text-lg shadow-md focus:outline-none focus:ring-0"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
@@ -93,7 +93,7 @@ export default function AboutPage() {
 
                       <Link href="/menu" passHref legacyBehavior>
                         <motion.a
-                          className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-lg shadow-md focus:outline-none focus:ring-0"
+                          className="bg-transparent border-2 border-white text-white font-bold py-3 px-4 sm:px-8 rounded-lg hover:bg-white/20 hover:text-primary transition-colors duration-300 text-base sm:text-lg shadow-md focus:outline-none focus:ring-0"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
