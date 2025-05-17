@@ -359,7 +359,7 @@ export default function PreorderPage() {
               animate={{ scale: [1, 1.03, 1], opacity: [0.7, 1, 0.7] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
-              ✨ Plus, get 20p off all specialty drinks! (Base price) ✨
+              ✨ Plus, get 20p off all specialty drinks! ✨
             </motion.p>
              <p className="mt-4 max-w-xl mx-auto text-sm text-yellow-300">
               Oat Milk: +£{OAT_MILK_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Caramel Syrup: +£{SYRUP_COST.toFixed(2)} &nbsp;&nbsp;|&nbsp;&nbsp; Vanilla Syrup: +£{SYRUP_COST.toFixed(2)}
