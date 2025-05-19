@@ -40,6 +40,14 @@ export default function FAQPage() {
       answer: "Yes, we offer oat milk as a dairy-free alternative for an additional £0.40.",
     },
     {
+      question: "What brand do you use for your coffee beans?",
+      answer: "Our supplier is Rave Coffee, a local brand from Cirencester. We're proud to partner with them to bring you high-quality coffee.",
+    },
+    {
+      question: "What flavors do your beans have?",
+      answer: "For our caffeinated coffee, we use the Rave Coffee Chatswood Blend, which has rich notes of big chocolate. For decaf, we use the Rave Coffee Columbia Sugarcane Decaf, offering delightful hints of chocolate, vanilla, and red fruits. For more information, please visit @https://ravecoffee.co.uk/",
+    },
+    {
       question: "Where can I find more information or updates?",
       answer: "Follow our Instagram page @_lemme.sip_ for the latest news, menu highlights, and behind-the-scenes content! You can also reach out via our Contact page.",
     },
