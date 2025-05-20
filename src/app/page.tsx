@@ -5,6 +5,33 @@ import { motion } from "framer-motion";
 import Link from 'next/link';
 import AnimatedSection from "@/components/AnimatedSection";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Lemme Pop-Up Café | Japanese-Inspired Drinks in Bath | June 3rd",
+  description: "Discover Lemme, a one-day pop-up café in Bath on June 3rd, 2025. Pre-order unique Japanese-inspired specialty drinks like Matcha & Hojicha lattes. 22C New Bond Street, Bath.",
+  keywords: ["Lemme Sip Cafe", "Lemme Bath", "pop-up cafe Bath", "Japanese drinks Bath", "matcha Bath", "hojicha Bath", "specialty coffee Bath", "pre-order drinks Bath", "June 3rd event Bath"],
+  openGraph: {
+    title: "Lemme Pop-Up Café | Japanese-Inspired Drinks in Bath | June 3rd",
+    description: "Discover Lemme, a one-day pop-up café in Bath on June 3rd, 2025. Pre-order unique Japanese-inspired specialty drinks like Matcha & Hojicha lattes. 22C New Bond Street, Bath.",
+    images: [
+      {
+        url: '/images/icon.png', // Make sure this path is correct and the image is in public/images
+        width: 420,
+        height: 420,
+        alt: 'Lemme Pop-Up Café Logo',
+      },
+    ],
+    url: 'https://lemmesip.netlify.app', // Replace with your actual deployed URL
+    type: 'website',
+  },
+  twitter: { // Optional, but good for Twitter card previews
+    card: 'summary_large_image',
+    title: "Lemme Pop-Up Café | Japanese-Inspired Drinks in Bath | June 3rd",
+    description: "Discover Lemme, a one-day pop-up café in Bath on June 3rd, 2025. Pre-order unique Japanese-inspired specialty drinks like Matcha & Hojicha lattes.",
+    images: ['/images/icon.png'], // Make sure this path is correct
+  },
+};
 
 export default function AboutPage() {
   // Team members data

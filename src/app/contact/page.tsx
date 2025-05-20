@@ -4,6 +4,33 @@ import { useState, ChangeEvent, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import AnimatedSection from '@/components/AnimatedSection';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Contact Us - Lemme Pop-Up Café | Questions & Feedback",
+  description: "Contact Lemme Pop-Up Café in Bath for any questions, pre-order enquiries, or feedback. We are here to help! Event on June 3rd.",
+  keywords: ["contact Lemme Cafe", "Lemme Cafe Bath contact", "cafe support Bath", "pop-up cafe questions", "Lemme Cafe feedback"],
+  openGraph: {
+    title: "Contact Lemme Pop-Up Café | Bath",
+    description: "Get in touch with Lemme Pop-Up Café for questions about our Japanese-inspired drinks, pre-orders, or the event on June 3rd in Bath.",
+    url: 'https://lemmesip.netlify.app/contact',
+    images: [
+      {
+        url: '/images/icon.png', 
+        width: 420,
+        height: 420,
+        alt: 'Lemme Pop-Up Café - Contact Us',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Contact Lemme Pop-Up Café | Bath",
+    description: "Get in touch with Lemme Pop-Up Café for questions about our Japanese-inspired drinks, pre-orders, or the event on June 3rd in Bath.",
+    images: ['/images/icon.png'],
+  },
+};
 
 const MAX_MESSAGE_LENGTH = 1000;
 

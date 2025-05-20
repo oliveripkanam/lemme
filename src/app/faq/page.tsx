@@ -3,6 +3,33 @@
 import { useState } from "react";
 import { Disclosure, Transition } from "@headlessui/react";
 import AnimatedSection from "@/components/AnimatedSection";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "FAQ & Terms - Lemme Pop-Up Café | Your Questions Answered",
+  description: "Find answers to frequently asked questions about Lemme Pop-Up Café in Bath: event details (June 3rd), pre-orders, drinks, payment, and terms & conditions.",
+  keywords: ["Lemme Cafe FAQ", "Lemme Cafe terms", "pop-up cafe Bath FAQ", "Japanese drinks Bath questions", "Lemme Cafe event details"],
+  openGraph: {
+    title: "FAQ & Terms - Lemme Pop-Up Café | Bath",
+    description: "All your questions about Lemme Pop-Up Café answered. Learn about our event in Bath, menu, pre-orders, and more.",
+    url: 'https://lemmesip.netlify.app/faq',
+    images: [
+      {
+        url: '/images/icon.png',
+        width: 420,
+        height: 420,
+        alt: 'Lemme Pop-Up Café - FAQ & Terms',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "FAQ & Terms - Lemme Pop-Up Café | Bath",
+    description: "All your questions about Lemme Pop-Up Café answered. Learn about our event in Bath, menu, pre-orders, and more.",
+    images: ['/images/icon.png'],
+  },
+};
 
 export default function FAQPage() {
   // FAQ items
