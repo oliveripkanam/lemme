@@ -47,7 +47,7 @@ interface LiveOrderItemQueryResult extends Omit<LiveOrderItem, 'live_orders' | '
     customer_name?: string;
     total_amount?: number;
     status?: "pending" | "completed" | "archived";
-  }[] | null;
+  } | null;
 }
 
 interface GroupedLiveOrder {
@@ -145,12 +145,12 @@ export default function KitchenPage() {
       if (fetchError) throw fetchError;
       
       const processedItems: LiveOrderItem[] = rawData?.map(itemQueryResult => {
-        const item = itemQueryResult as LiveOrderItemQueryResult;
+        const item = itemQueryResult as any; // Broaden type here to handle potential mismatch below
         return {
           ...item,
           customizations: parseCustomizations(item.customizations),
-          // Correctly access live_orders: it's an array from the join, but an item belongs to one order.
-          live_orders: item.live_orders && item.live_orders.length > 0 ? item.live_orders[0] : null 
+          // Assign live_orders, trusting runtime structure is object or null
+          live_orders: item.live_orders as (LiveOrderItemQueryResult['live_orders']) // Cast to the target type
         };
       }) || [];
       

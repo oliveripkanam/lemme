@@ -131,10 +131,13 @@ export default function CashierPage() {
 
   const calculateUnitPrice = (
     basePrice: number,
-    customizations: OrderItemCustomizations
+    customizations: OrderItemCustomizations,
+    baseDrinkName: string
   ): number => {
     let price = basePrice;
-    if (customizations.hasOatMilk) price += OAT_MILK_COST;
+    if (customizations.hasOatMilk && baseDrinkName !== "Americano" && baseDrinkName !== "Iced Americano") {
+      price += OAT_MILK_COST;
+    }
     if (customizations.syrups.caramel) price += SYRUP_COST;
     if (customizations.syrups.vanilla) price += SYRUP_COST;
     return Math.max(0, price);
@@ -194,7 +197,7 @@ export default function CashierPage() {
   const addCustomizedItemToOrder = () => {
     if (!customizationItem) return;
     const { drink, customizations, quantity } = customizationItem;
-    const unitPrice = calculateUnitPrice(drink.price, customizations);
+    const unitPrice = calculateUnitPrice(drink.price, customizations, drink.name);
     const existingItemIndex = currentOrderItems.findIndex(item => 
       item.baseDrinkId === drink.id && JSON.stringify(item.customizations) === JSON.stringify(customizations)
     );
@@ -220,7 +223,7 @@ export default function CashierPage() {
        isDecaf: false, // Decaf is a choice in customization pane if available
        isIced: drink.isIced || false,
     };
-    const unitPrice = calculateUnitPrice(drink.price, customizations);
+    const unitPrice = calculateUnitPrice(drink.price, customizations, drink.name);
     const existingItemIndex = currentOrderItems.findIndex(item => 
       item.baseDrinkId === drink.id && JSON.stringify(item.customizations) === JSON.stringify(customizations)
     );
@@ -562,18 +565,18 @@ export default function CashierPage() {
                           </label>
                           <label className="flex items-center space-x-2 p-3 bg-slate-700 rounded-md cursor-pointer hover:bg-slate-600 transition-colors">
                             <input type="checkbox" name="milk_oat" checked={customizationItem.customizations.hasOatMilk} onChange={() => handleCustomizationChange('hasOatMilk')} className="form-checkbox text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500 rounded"/>
-                            <span>Oat Milk (+£{OAT_MILK_COST.toFixed(2)})</span>
+                            <span>Oat Milk (Free)</span>
                           </label>
                         </>
                       ) : (
                         // Radio buttons for other drinks
                         <>
                           <label className="flex items-center space-x-2 p-3 bg-slate-700 rounded-md cursor-pointer hover:bg-slate-600 transition-colors">
-                            <input type="radio" name="milk" checked={customizationItem.customizations.hasSemiSkimmedMilk} onChange={() => handleCustomizationChange('hasSemiSkimmedMilk')} className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"/>
+                            <input type="radio" name="milk" checked={customizationItem.customizations.hasSemiSkimmedMilk && !customizationItem.customizations.hasOatMilk} onChange={() => {handleCustomizationChange('hasSemiSkimmedMilk'); handleCustomizationChange('hasOatMilk', false);}} className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"/>
                             <span>Semi-Skimmed (Default)</span>
                           </label>
                           <label className="flex items-center space-x-2 p-3 bg-slate-700 rounded-md cursor-pointer hover:bg-slate-600 transition-colors">
-                            <input type="radio" name="milk" checked={customizationItem.customizations.hasOatMilk} onChange={() => handleCustomizationChange('hasOatMilk')} className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"/>
+                            <input type="radio" name="milk" checked={customizationItem.customizations.hasOatMilk} onChange={() => {handleCustomizationChange('hasOatMilk'); handleCustomizationChange('hasSemiSkimmedMilk', false);}} className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"/>
                             <span>Oat Milk (+£{OAT_MILK_COST.toFixed(2)})</span>
                           </label>
                         </>
@@ -629,7 +632,7 @@ export default function CashierPage() {
               <div className="mt-8 pt-6 border-t border-slate-600">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xl font-semibold text-sky-300">Item Total:</span>
-                  <span className="text-2xl font-bold">£{(calculateUnitPrice(customizationItem.drink.price, customizationItem.customizations) * customizationItem.quantity).toFixed(2)}</span>
+                  <span className="text-2xl font-bold">£{(calculateUnitPrice(customizationItem.drink.price, customizationItem.customizations, customizationItem.drink.name) * customizationItem.quantity).toFixed(2)}</span>
                 </div>
                 <button 
                   onClick={addCustomizedItemToOrder} 

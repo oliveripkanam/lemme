@@ -98,13 +98,14 @@ export default function PreorderPage() {
     isSpecialty: boolean, 
     hasOat: boolean, 
     hasCaramel: boolean,
-    hasVanilla: boolean
+    hasVanilla: boolean,
+    drinkName: string
   ): number => {
     let price = basePrice;
     if (isSpecialty) {
       price -= SPECIALTY_DISCOUNT;
     }
-    if (hasOat) {
+    if (hasOat && drinkName !== "Americano" && drinkName !== "Iced Americano") {
       price += OAT_MILK_COST;
     }
     if (hasCaramel) {
@@ -145,7 +146,7 @@ export default function PreorderPage() {
   };
   
   const addSimpleItemToCart = (drink: BaseDrink) => {
-    const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', false, false, false);
+    const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', false, false, false, drink.name);
 
     const existingItemIndex = cartItems.findIndex(item => 
       item.baseDrinkId === drink.id &&
@@ -183,7 +184,7 @@ export default function PreorderPage() {
     if (!modalData) return;
 
     const { drink, oatMilk, hasCaramelSyrup, hasVanillaSyrup, hasSemiSkimmedMilk, isDecaf, quantity } = modalData;
-    const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', oatMilk, hasCaramelSyrup, hasVanillaSyrup);
+    const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', oatMilk, hasCaramelSyrup, hasVanillaSyrup, drink.name);
     
     const existingItemIndex = cartItems.findIndex(item => 
       item.baseDrinkId === drink.id &&
@@ -569,7 +570,9 @@ export default function PreorderPage() {
                     <span>Use Oat Milk</span>
                   </span>
                   <div className="flex items-center">
-                    <span className="text-sm font-medium mr-3 text-primary">+£{OAT_MILK_COST.toFixed(2)}</span>
+                    <span className="text-sm font-medium mr-3 text-primary">
+                      {modalData.drink.name === "Americano" || modalData.drink.name === "Iced Americano" ? "No Extra Charge" : `(+£${OAT_MILK_COST.toFixed(2)})`}
+                    </span>
                     <input 
                       type="checkbox" 
                       checked={modalData.oatMilk}
@@ -660,7 +663,14 @@ export default function PreorderPage() {
               <div className="text-right mb-6">
                  <p className="text-sm text-gray-500">Price for this item (x{modalData.quantity}):</p>
                  <p className="text-2xl font-bold text-primary">
-                    £{(calculateUnitPrice(modalData.drink.price, modalData.drink.category === 'specialtyDrinks', modalData.oatMilk, modalData.hasCaramelSyrup, modalData.hasVanillaSyrup) * modalData.quantity).toFixed(2)}
+                    £{(calculateUnitPrice(
+                      modalData.drink.price, 
+                      modalData.drink.category === 'specialtyDrinks', 
+                      modalData.oatMilk, 
+                      modalData.hasCaramelSyrup, 
+                      modalData.hasVanillaSyrup,
+                      modalData.drink.name
+                    ) * modalData.quantity).toFixed(2)}
                  </p>
               </div>
 
