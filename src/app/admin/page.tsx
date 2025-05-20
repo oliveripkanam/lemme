@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient"; // Import supabase client
 import { EyeIcon, EyeSlashIcon, MagnifyingGlassIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from 'next/link'; // Added Link import
 
 // Define types for order data
 interface DrinkDetail {
@@ -244,12 +245,28 @@ export default function AdminPage() {
       <div className="container mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-3xl sm:text-4xl font-bold text-white">Pre-order Management</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 text-sm shadow-md"
-          >
-            Log Out
-          </button>
+          <div className="flex gap-2 items-center"> {/* Wrapper for buttons */}
+            <Link href="/admin/cashier" passHref>
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 text-sm shadow-md"
+              >
+                Cashier UI
+              </button>
+            </Link>
+            <Link href="/admin/kitchen" passHref>
+              <button
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 text-sm shadow-md"
+              >
+                Kitchen View
+              </button>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 text-sm shadow-md"
+            >
+              Log Out
+            </button>
+          </div>
         </div>
 
         {/* Search and Filter Controls */}
