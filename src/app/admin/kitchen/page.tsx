@@ -93,7 +93,7 @@ export default function KitchenPage() {
     return defaults; // Return defaults if customizations is not a valid object
   };
 
-  const groupAndFilterOrders = (items: LiveOrderItem[]): GroupedLiveOrder[] => {
+  const groupAndFilterOrders = useCallback((items: LiveOrderItem[]): GroupedLiveOrder[] => {
     const grouped: Record<string, GroupedLiveOrder> = {};
     items.forEach(item => {
       // Only process items belonging to a 'pending' parent order for the kitchen queue
@@ -117,7 +117,7 @@ export default function KitchenPage() {
     const result = Object.values(grouped).filter(group => group.status === 'pending'); // Ensure only pending orders are shown
     result.sort((a, b) => new Date(a.order_created_at).getTime() - new Date(b.order_created_at).getTime());
     return result;
-  };
+  }, [pendingOrders]);
 
   const fetchPendingOrders = useCallback(async () => {
     setIsLoading(true);

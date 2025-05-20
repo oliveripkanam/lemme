@@ -2,11 +2,10 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusIcon, MinusIcon, XMarkIcon, ShoppingCartIcon as SolidShoppingCartIcon, CreditCardIcon, ReceiptPercentIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, MinusIcon, XMarkIcon, ShoppingCartIcon as SolidShoppingCartIcon, CreditCardIcon, ReceiptPercentIcon } from "@heroicons/react/24/solid";
 import { RocketLaunchIcon } from "@heroicons/react/24/outline";
 import Link from 'next/link';
 import { supabase } from "@/lib/supabaseClient"; // Assuming your Supabase client is here
-import { InformationCircleIcon, ShoppingCartIcon, XCircleIcon, MinusCircleIcon, PlusCircleIcon, CurrencyDollarIcon, CheckCircleIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon, CogIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 
 // Costs for modifications - ensure these are consistent with your actual costs
 const OAT_MILK_COST = 0.40;
