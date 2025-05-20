@@ -145,12 +145,11 @@ export default function KitchenPage() {
       if (fetchError) throw fetchError;
       
       const processedItems: LiveOrderItem[] = rawData?.map(itemQueryResult => {
-        const item = itemQueryResult as any; // Broaden type here to handle potential mismatch below
+        const item = itemQueryResult as unknown as LiveOrderItemQueryResult; 
         return {
           ...item,
           customizations: parseCustomizations(item.customizations),
-          // Assign live_orders, trusting runtime structure is object or null
-          live_orders: item.live_orders as (LiveOrderItemQueryResult['live_orders']) // Cast to the target type
+          live_orders: item.live_orders 
         };
       }) || [];
       
