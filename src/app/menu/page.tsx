@@ -4,39 +4,6 @@ import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import { CubeTransparentIcon, ArrowPathRoundedSquareIcon, TicketIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: "Menu - Lemme Pop-Up Café | Japanese-Inspired & Classic Drinks in Bath",
-  description: "Explore the drink menu for Lemme Pop-Up Café in Bath. Featuring Matcha, Hojicha, Yuzu tea, classic coffees, and more. Pre-order specialty drinks for a discount!",
-  keywords: ["Lemme Cafe menu", "Japanese drinks menu Bath", "matcha latte Bath", "hojicha latte Bath", "yuzu tea Bath", "coffee menu Bath", "specialty drinks Bath", "Lemme pop-up menu"],
-  openGraph: {
-    title: "Menu - Lemme Pop-Up Café | Drinks in Bath",
-    description: "Explore the drink menu for Lemme Pop-Up Café: Japanese-inspired specialty drinks and classic coffees in Bath.",
-    url: 'https://lemmesip.netlify.app/menu',
-    images: [
-      {
-        url: '/images/menuupdated.png', // Assuming you have a general menu image or cafe image
-        width: 1200, // Adjust if you have actual image dimensions
-        height: 630, // Adjust for Open Graph best practices
-        alt: 'Lemme Pop-Up Café Menu Preview',
-      },
-      {
-        url: '/images/icon.png', 
-        width: 420,
-        height: 420,
-        alt: 'Lemme Pop-Up Café Logo',
-      }
-    ],
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Menu - Lemme Pop-Up Café | Drinks in Bath",
-    description: "Explore the drink menu for Lemme Pop-Up Café: Japanese-inspired specialty drinks and classic coffees in Bath.",
-    images: ['/images/menuupdated.png'], // Main image for Twitter card
-  },
-};
 
 type MenuItem = {
   id: string;

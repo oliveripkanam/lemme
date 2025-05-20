@@ -6,33 +6,6 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlusIcon, MinusIcon, XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/solid";
 import { supabase } from "@/lib/supabaseClient";
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: "Pre-order Drinks - Lemme Pop-Up Café | Save Time & Get Discounts",
-  description: "Pre-order your favorite Japanese-inspired drinks from Lemme Pop-Up Café in Bath. Save 20p on all specialty drinks like Matcha & Hojicha. Select pickup time and skip the queue!",
-  keywords: ["pre-order Lemme Cafe", "pre-order Japanese drinks Bath", "skip queue cafe Bath", "discount drinks Bath", "Matcha pre-order", "Hojicha pre-order", "Lemme Cafe June 3rd"],
-  openGraph: {
-    title: "Pre-order Drinks - Lemme Pop-Up Café | Bath",
-    description: "Pre-order from Lemme Pop-Up Café for June 3rd in Bath. Save on specialty drinks and pick up at your convenience.",
-    url: 'https://lemmesip.netlify.app/preorder',
-    images: [
-      {
-        url: '/images/icon.png', // Or a specific pre-order themed image if you have one
-        width: 420,
-        height: 420,
-        alt: 'Lemme Pop-Up Café - Pre-order Now',
-      },
-    ],
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Pre-order Drinks - Lemme Pop-Up Café | Bath",
-    description: "Pre-order from Lemme Pop-Up Café for June 3rd in Bath. Save on specialty drinks and pick up at your convenience.",
-    images: ['/images/icon.png'],
-  },
-};
 
 const OAT_MILK_COST = 0.40;
 const SYRUP_COST = 0.40;
