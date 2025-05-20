@@ -59,6 +59,10 @@ interface GroupedLiveOrder {
   status: "pending" | "completed" | "archived"; // Status of the parent order
 }
 
+// Type for the pure grouped order, without UI-specific expansion state
+interface PureGroupedOrder extends Omit<GroupedLiveOrder, 'isExpanded' | 'items'> {
+  items: LiveOrderItem[]; // Ensure items are part of this structure for mapping
+}
 
 export default function KitchenPage() {
   const [pendingOrders, setPendingOrders] = useState<GroupedLiveOrder[]>([]);
@@ -93,10 +97,10 @@ export default function KitchenPage() {
     return defaults; // Return defaults if customizations is not a valid object
   };
 
-  const groupAndFilterOrders = useCallback((items: LiveOrderItem[]): GroupedLiveOrder[] => {
-    const grouped: Record<string, GroupedLiveOrder> = {};
+  // Renamed and refactored: This function now purely groups and processes items, without isExpanded
+  const groupAndProcessRawItems = useCallback((items: LiveOrderItem[]): PureGroupedOrder[] => {
+    const grouped: Record<string, PureGroupedOrder> = {};
     items.forEach(item => {
-      // Only process items belonging to a 'pending' parent order for the kitchen queue
       if (item.live_orders?.status !== 'pending') {
         return;
       }
@@ -107,17 +111,20 @@ export default function KitchenPage() {
           customer_name: item.live_orders?.customer_name || "Guest",
           order_created_at: item.live_orders?.created_at || item.created_at || new Date().toISOString(),
           items: [],
-          isExpanded: pendingOrders.find(po => po.live_order_id === orderId)?.isExpanded || false, // Preserve expansion state
           status: item.live_orders?.status || 'pending',
+          // isExpanded is NOT set here
         };
       }
       grouped[orderId].items.push(item);
+      // Sort items within each group by their creation time
       grouped[orderId].items.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
     });
-    const result = Object.values(grouped).filter(group => group.status === 'pending'); // Ensure only pending orders are shown
-    result.sort((a, b) => new Date(a.order_created_at).getTime() - new Date(b.order_created_at).getTime());
+    // Filter for parent orders that are pending and then sort these orders by their creation time
+    const result = Object.values(grouped)
+      .filter(group => group.status === 'pending')
+      .sort((a, b) => new Date(a.order_created_at).getTime() - new Date(b.order_created_at).getTime());
     return result;
-  }, [pendingOrders]);
+  }, []); // This function is stable as it has no external dependencies apart from argument `items`
 
   const fetchPendingOrders = useCallback(async () => {
     setIsLoading(true);
@@ -137,11 +144,11 @@ export default function KitchenPage() {
           created_at,
           live_orders ( created_at, total_amount, customer_name, status ) 
         `)
+        // Primary sort by parent order's creation time, then by item's creation time
         .order("created_at", { referencedTable: "live_orders", ascending: true })
         .order("created_at", { ascending: true });
 
       console.log("[Kitchen] Raw data from Supabase:", JSON.stringify(rawData, null, 2));
-
       if (fetchError) throw fetchError;
       
       const processedItems: LiveOrderItem[] = rawData?.map(itemQueryResult => {
@@ -155,22 +162,36 @@ export default function KitchenPage() {
       
       console.log("[Kitchen] Processed items before grouping:", JSON.stringify(processedItems, null, 2));
 
-      const grouped = groupAndFilterOrders(processedItems);
-      console.log("[Kitchen] Grouped and filtered orders for display:", JSON.stringify(grouped, null, 2));
-      setPendingOrders(grouped);
+      const pureNewGroups = groupAndProcessRawItems(processedItems);
+      console.log("[Kitchen] Pure grouped orders (no expansion state yet):", JSON.stringify(pureNewGroups, null, 2));
+
+      setPendingOrders(currentDisplayedOrders => {
+        const updatedOrders = pureNewGroups.map(newPureGroup => {
+          const existingOrder = currentDisplayedOrders.find(
+            displayedOrder => displayedOrder.live_order_id === newPureGroup.live_order_id
+          );
+          return {
+            ...newPureGroup,
+            isExpanded: existingOrder?.isExpanded || false, // Preserve or default expansion state
+          };
+        });
+        console.log("[Kitchen] Final pendingOrders state after merging expansion:", JSON.stringify(updatedOrders, null, 2));
+        return updatedOrders;
+      });
+      
       setError(null);
-    } catch (err: unknown) {
+    } catch (err: unknown) { 
       console.error("[Kitchen] Error fetching pending orders:", err);
       let message = 'Failed to fetch orders';
       if (err instanceof Error) {
         message = `Failed to fetch orders: ${err.message}`;
       }
       setError(message);
-      setPendingOrders([]);
+      setPendingOrders([]); // Clear orders on error
     } finally {
       setIsLoading(false);
     }
-  }, [groupAndFilterOrders]);
+  }, [groupAndProcessRawItems]); // Depends on stable groupAndProcessRawItems
 
   useEffect(() => {
     fetchPendingOrders();
