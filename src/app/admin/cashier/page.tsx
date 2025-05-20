@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlusIcon, MinusIcon, XMarkIcon, ShoppingCartIcon as SolidShoppingCartIcon, CreditCardIcon, ReceiptPercentIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { RocketLaunchIcon } from "@heroicons/react/24/outline";
 import Link from 'next/link';
 import { supabase } from "@/lib/supabaseClient"; // Assuming your Supabase client is here
+import { InformationCircleIcon, ShoppingCartIcon, XCircleIcon, MinusCircleIcon, PlusCircleIcon, CurrencyDollarIcon, CheckCircleIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon, CogIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 
 // Costs for modifications - ensure these are consistent with your actual costs
 const OAT_MILK_COST = 0.40;
@@ -165,12 +166,11 @@ export default function CashierPage() {
 
   const handleCustomizationChange = (
     option: keyof CustomizationState['customizations'] | 'quantity' | 'syrups.caramel' | 'syrups.vanilla',
-    value?: any
+    value?: boolean | number
   ) => {
     if (!customizationItem) return;
-    let newCustomizations = { ...customizationItem.customizations, syrups: { ...customizationItem.customizations.syrups}};
+    const newCustomizations = { ...customizationItem.customizations, syrups: { ...customizationItem.customizations.syrups}};
     let newQuantity = customizationItem.quantity;
-    const drinkId = customizationItem.drink.id;
 
     if (option === 'quantity') newQuantity = Math.max(1, customizationItem.quantity + (value as number));
     else if (option === 'syrups.caramel') newCustomizations.syrups.caramel = !newCustomizations.syrups.caramel;
@@ -292,9 +292,10 @@ export default function CashierPage() {
       setSubmitOrderStatus({ message: `Order for ${customerName.trim()} submitted!`, type: "success" });
       setCurrentOrderItems([]);
       setCustomerName("");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[Cashier] Full error during order submission:", error);
-      setSubmitOrderStatus({ message: `Error submitting order: ${error.message || "Unknown error"}`, type: "error" });
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
+      setSubmitOrderStatus({ message: `Error submitting order: ${message}`, type: "error" });
     } finally {
       setIsSubmittingOrder(false);
       setTimeout(() => setSubmitOrderStatus(null), 5000);
@@ -317,53 +318,49 @@ export default function CashierPage() {
   const fetchSalesStats = async () => {
     setIsLoadingStats(true);
     setStatsError(null);
+    // Define a type for the items fetched for stats
+    type FetchedStatItem = {
+      drink_name: string;
+      quantity: number;
+      calculated_unit_price: number;
+      customizations: OrderItemCustomizations; // Assuming OrderItemCustomizations is suitable
+    };
     try {
-      const { data: completedItems, error } = await supabase
+      const { data, error } = await supabase
         .from("live_order_items")
         .select("drink_name, quantity, calculated_unit_price, customizations")
         .eq("status", "completed");
 
       if (error) throw error;
 
-      if (completedItems) {
-        const totalDrinksSold = completedItems.reduce((sum, item) => sum + item.quantity, 0);
-        const totalRevenue = completedItems.reduce((sum, item) => sum + (item.calculated_unit_price * item.quantity), 0);
-        
-        const drinksBreakdown = completedItems.reduce<SalesStats['drinksBreakdown']>((acc, item) => {
-          const name = item.drink_name;
-          if (!acc[name]) {
-            acc[name] = { name: name, count: 0, revenue: 0 };
-          }
-          acc[name].count += item.quantity;
-          acc[name].revenue += (item.calculated_unit_price * item.quantity);
-          return acc;
-        }, {});
+      let totalDrinksSold = 0;
+      let totalRevenue = 0;
+      const drinksBreakdown: Record<string, { name: string; count: number; revenue: number }> = {};
 
-        setSalesStats({
-          totalDrinksSold,
-          totalRevenue,
-          drinksBreakdown,
-        });
-      } else {
-        setSalesStats({
-          totalDrinksSold: 0,
-          totalRevenue: 0,
-          drinksBreakdown: {},
-        });
-      }
-    } catch (err: any) {
-      console.error("Error fetching sales stats:", err);
-      setStatsError(`Failed to load statistics: ${err.message}`);
-      setSalesStats(null);
+      data?.forEach((item: FetchedStatItem) => { // Used FetchedStatItem type
+        totalDrinksSold += item.quantity;
+        totalRevenue += item.quantity * item.calculated_unit_price;
+        if (!drinksBreakdown[item.drink_name]) {
+          drinksBreakdown[item.drink_name] = { name: item.drink_name, count: 0, revenue: 0 };
+        }
+        drinksBreakdown[item.drink_name].count += item.quantity;
+        drinksBreakdown[item.drink_name].revenue += item.quantity * item.calculated_unit_price;
+      });
+
+      setSalesStats({ totalDrinksSold, totalRevenue, drinksBreakdown });
+    } catch (error: unknown) { // Changed from any
+      console.error("Error fetching sales stats:", error);
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
+      setStatsError(`Failed to load sales statistics: ${message}`);
     } finally {
       setIsLoadingStats(false);
     }
   };
 
   // Fetch stats on initial load
-  useState(() => {
+  useEffect(() => {
     fetchSalesStats();
-  });
+  }, []);
 
   // --- UI Rendering ---
   return (

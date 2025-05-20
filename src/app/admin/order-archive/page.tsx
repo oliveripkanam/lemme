@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { motion, AnimatePresence } from "framer-motion";
-import { ListBulletIcon, CheckCircleIcon, ClockIcon, EyeIcon, TagIcon, UserCircleIcon, CubeIcon, CurrencyPoundIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
+import { CheckCircleIcon, ClockIcon, EyeIcon, TagIcon, UserCircleIcon, CubeIcon, CurrencyPoundIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 // Types (can be shared or adapted from other pages)
@@ -39,7 +39,7 @@ interface ArchivedOrderQueryResult extends Omit<ArchivedOrder, 'live_order_items
     id: string;
     drink_name: string;
     quantity: number;
-    customizations: any; // Parse this
+    customizations: unknown;
     calculated_unit_price: number;
     status: "pending" | "completed";
   }[];
@@ -52,25 +52,29 @@ export default function OrderArchivePage() {
   const [filterStatus, setFilterStatus] = useState<"completed" | "pending">("completed"); // Default to showing completed
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null); // For loading state
 
-  const parseItemCustomizations = (customizations: any): OrderItemCustomizations => {
+  const parseItemCustomizations = (customizations: unknown): OrderItemCustomizations => {
     const defaults: OrderItemCustomizations = {
       hasOatMilk: false,
       syrups: { caramel: false, vanilla: false },
-      hasSemiSkimmedMilk: true,
+      hasSemiSkimmedMilk: true, // Default to true, as most drinks would have it unless specified otherwise
       isDecaf: false,
       isIced: false,
     };
-    if (typeof customizations !== 'object' || customizations === null) return defaults;
-    return {
-      hasOatMilk: typeof customizations.hasOatMilk === 'boolean' ? customizations.hasOatMilk : defaults.hasOatMilk,
-      syrups: {
-        caramel: typeof customizations.syrups?.caramel === 'boolean' ? customizations.syrups.caramel : defaults.syrups.caramel,
-        vanilla: typeof customizations.syrups?.vanilla === 'boolean' ? customizations.syrups.vanilla : defaults.syrups.vanilla,
-      },
-      hasSemiSkimmedMilk: typeof customizations.hasSemiSkimmedMilk === 'boolean' ? customizations.hasSemiSkimmedMilk : defaults.hasSemiSkimmedMilk,
-      isDecaf: typeof customizations.isDecaf === 'boolean' ? customizations.isDecaf : defaults.isDecaf,
-      isIced: typeof customizations.isIced === 'boolean' ? customizations.isIced : defaults.isIced,
-    };
+    // Check if customizations is an object and not null
+    if (typeof customizations === 'object' && customizations !== null) {
+      const c = customizations as Partial<OrderItemCustomizations>; // Type assertion
+      return {
+        hasOatMilk: typeof c.hasOatMilk === 'boolean' ? c.hasOatMilk : defaults.hasOatMilk,
+        syrups: {
+          caramel: typeof c.syrups?.caramel === 'boolean' ? c.syrups.caramel : defaults.syrups.caramel,
+          vanilla: typeof c.syrups?.vanilla === 'boolean' ? c.syrups.vanilla : defaults.syrups.vanilla,
+        },
+        hasSemiSkimmedMilk: typeof c.hasSemiSkimmedMilk === 'boolean' ? c.hasSemiSkimmedMilk : defaults.hasSemiSkimmedMilk,
+        isDecaf: typeof c.isDecaf === 'boolean' ? c.isDecaf : defaults.isDecaf,
+        isIced: typeof c.isIced === 'boolean' ? c.isIced : defaults.isIced,
+      };
+    }
+    return defaults; // Return defaults if customizations is not a valid object
   };
 
   const fetchOrders = useCallback(async (statusToShow: "pending" | "completed") => {
@@ -104,9 +108,10 @@ export default function OrderArchivePage() {
       })) || [];
       
       setOrders(mappedOrders);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`[Archive] Error fetching ${statusToShow} orders:`, err);
-      setError(`Failed to fetch orders: ${err.message}`);
+      const message = err instanceof Error ? err.message : "An unknown error occurred";
+      setError(`Failed to fetch orders: ${message}`);
       setOrders([]);
     } finally {
       setIsLoading(false);
@@ -183,9 +188,10 @@ export default function OrderArchivePage() {
       fetchOrders(filterStatus);
       console.log(`[Archive] Order ${orderId} marked back to pending.`);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`[Archive] Error marking order ${orderId} as pending:`, err);
-      setError(`Failed to revert order ${orderId}: ${err.message}`);
+      const message = err instanceof Error ? err.message : "An unknown error occurred";
+      setError(`Failed to revert order ${orderId}: ${message}`);
     } finally {
       setUpdatingOrderId(null);
     }

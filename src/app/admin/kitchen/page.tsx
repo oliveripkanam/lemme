@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { EyeIcon, CheckCircleIcon, ClockIcon, ChevronDownIcon, ChevronUpIcon, ArchiveBoxIcon, FolderOpenIcon, BuildingStorefrontIcon, ArrowUturnDownIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from 'next/navigation'; // For navigation
 import Link from 'next/link'; // Added Link for navigation
 
 // Costs for modifications - for display consistency
@@ -42,7 +41,7 @@ interface LiveOrderItem {
 }
 
 interface LiveOrderItemQueryResult extends Omit<LiveOrderItem, 'live_orders' | 'customizations'> {
-  customizations: any;
+  customizations: unknown;
   live_orders: {
     created_at: string;
     customer_name?: string;
@@ -67,9 +66,8 @@ export default function KitchenPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
-  const router = useRouter();
 
-  const parseCustomizations = (customizations: any): OrderItemCustomizations => {
+  const parseCustomizations = (customizations: unknown): OrderItemCustomizations => {
     const defaults: OrderItemCustomizations = {
       hasOatMilk: false,
       syrups: { caramel: false, vanilla: false },
@@ -77,17 +75,22 @@ export default function KitchenPage() {
       isDecaf: false,
       isIced: false,
     };
-    if (typeof customizations !== 'object' || customizations === null) return defaults;
-    return {
-      hasOatMilk: typeof customizations.hasOatMilk === 'boolean' ? customizations.hasOatMilk : defaults.hasOatMilk,
-      syrups: {
-        caramel: typeof customizations.syrups?.caramel === 'boolean' ? customizations.syrups.caramel : defaults.syrups.caramel,
-        vanilla: typeof customizations.syrups?.vanilla === 'boolean' ? customizations.syrups.vanilla : defaults.syrups.vanilla,
-      },
-      hasSemiSkimmedMilk: typeof customizations.hasSemiSkimmedMilk === 'boolean' ? customizations.hasSemiSkimmedMilk : defaults.hasSemiSkimmedMilk,
-      isDecaf: typeof customizations.isDecaf === 'boolean' ? customizations.isDecaf : defaults.isDecaf,
-      isIced: typeof customizations.isIced === 'boolean' ? customizations.isIced : defaults.isIced,
-    };
+
+    // Check if customizations is an object and not null
+    if (typeof customizations === 'object' && customizations !== null) {
+      const c = customizations as Partial<OrderItemCustomizations>; // Type assertion
+      return {
+        hasOatMilk: typeof c.hasOatMilk === 'boolean' ? c.hasOatMilk : defaults.hasOatMilk,
+        syrups: {
+          caramel: typeof c.syrups?.caramel === 'boolean' ? c.syrups.caramel : defaults.syrups.caramel,
+          vanilla: typeof c.syrups?.vanilla === 'boolean' ? c.syrups.vanilla : defaults.syrups.vanilla,
+        },
+        hasSemiSkimmedMilk: typeof c.hasSemiSkimmedMilk === 'boolean' ? c.hasSemiSkimmedMilk : defaults.hasSemiSkimmedMilk,
+        isDecaf: typeof c.isDecaf === 'boolean' ? c.isDecaf : defaults.isDecaf,
+        isIced: typeof c.isIced === 'boolean' ? c.isIced : defaults.isIced,
+      };
+    }
+    return defaults; // Return defaults if customizations is not a valid object
   };
 
   const groupAndFilterOrders = (items: LiveOrderItem[]): GroupedLiveOrder[] => {
@@ -142,14 +145,12 @@ export default function KitchenPage() {
       if (fetchError) throw fetchError;
       
       const processedItems: LiveOrderItem[] = rawData?.map(itemQueryResult => {
-        // Directly use itemQueryResult as its type should align with what Supabase returns here
-        // The rawData is an array of objects, each potentially having a nested live_orders object.
-        const item = itemQueryResult as any; // Use 'any' for a moment to inspect, then refine type if needed
+        const item = itemQueryResult as LiveOrderItemQueryResult;
         return {
           ...item,
           customizations: parseCustomizations(item.customizations),
-          // Correctly access live_orders, assuming it's an object, not an array here based on logs
-          live_orders: item.live_orders ? item.live_orders : null 
+          // Correctly access live_orders: it's an array from the join, but an item belongs to one order.
+          live_orders: item.live_orders && item.live_orders.length > 0 ? item.live_orders[0] : null 
         };
       }) || [];
       
@@ -159,14 +160,18 @@ export default function KitchenPage() {
       console.log("[Kitchen] Grouped and filtered orders for display:", JSON.stringify(grouped, null, 2));
       setPendingOrders(grouped);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[Kitchen] Error fetching pending orders:", err);
-      setError(`Failed to fetch orders: ${err.message}`);
+      let message = 'Failed to fetch orders';
+      if (err instanceof Error) {
+        message = `Failed to fetch orders: ${err.message}`;
+      }
+      setError(message);
       setPendingOrders([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [groupAndFilterOrders]);
 
   useEffect(() => {
     fetchPendingOrders();
@@ -210,7 +215,7 @@ export default function KitchenPage() {
     setUpdatingItemId(itemId);
     const newStatus = currentStatus === "completed" ? "pending" : "completed";
     try {
-      const { data, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from("live_order_items")
         .update({ status: newStatus })
         .eq("id", itemId)
@@ -235,9 +240,13 @@ export default function KitchenPage() {
       })); 
       
       console.log(`Item ${itemId} status changed to ${newStatus}.`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`Error toggling item ${itemId} status to ${newStatus}:`, err);
-      setError(`Failed to update item ${itemId}: ${err.message}`);
+      let message = `Failed to update item ${itemId}`;
+      if (err instanceof Error) {
+        message = `Failed to update item ${itemId}: ${err.message}`;
+      }
+      setError(message);
     } finally {
       setUpdatingItemId(null);
     }
@@ -285,9 +294,13 @@ export default function KitchenPage() {
       // console.log(`[Kitchen] Navigating to order archive for order: ${orderIdToComplete}`);
       // router.push('/admin/order-archive'); // REMOVED THIS LINE
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`[Kitchen] Error marking order ${orderIdToComplete} as completed & ready for archive:`, err);
-      setError(`Failed to process order ${orderIdToComplete}: ${err.message}`);
+      let message = `Failed to process order ${orderIdToComplete}`;
+      if (err instanceof Error) {
+        message = `Failed to process order ${orderIdToComplete}: ${err.message}`;
+      }
+      setError(message);
     } finally {
       setUpdatingOrderId(null);
     }
@@ -320,10 +333,15 @@ export default function KitchenPage() {
             Cashier UI
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-yellow-400 tracking-wider text-center flex-grow">DRINK MAKER QUEUE</h1>
-          <Link href="/admin/order-archive" className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
-            <FolderOpenIcon className="h-5 w-5 mr-2"/>
-            Completed Orders
-          </Link>
+          <div className="flex space-x-2"> {/* Added a div to wrap the admin home and completed orders buttons */}
+            <Link href="/admin" className="bg-gray-700 hover:bg-gray-600 text-yellow-300 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                 Admin Home
+            </Link>
+            <Link href="/admin/order-archive" className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
+              <FolderOpenIcon className="h-5 w-5 mr-2"/>
+              Completed Orders
+            </Link>
+          </div>
         </div>
         {error && <p className="text-red-400 mt-2 text-lg text-center">Error: {error}</p>}
       </header>
