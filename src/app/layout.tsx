@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   },
   description: "Discover Lemme, a one-day pop-up café in Bath on June 3rd, 2025. Pre-order unique Japanese-inspired specialty drinks like Matcha & Hojicha lattes. Find us at 22C New Bond Street, Bath.",
   keywords: ["Lemme Sip Cafe", "Lemme Bath", "Lemme Cafe", "pop-up cafe Bath", "Japanese drinks Bath", "matcha Bath", "hojicha Bath", "specialty coffee Bath", "pre-order drinks Bath", "June 3rd event Bath", "cafe near Waitrose Bath", "New Bond Street Bath cafe"],
+  icons: {
+    icon: '/images/lemmesquare.png',
+    shortcut: '/images/lemmesquare.png',
+    apple: '/images/lemmesquare.png',
+  },
   openGraph: {
     title: "Lemme Pop-Up Café | Japanese-Inspired Drinks in Bath | June 3rd",
     description: "Discover Lemme, a one-day pop-up café in Bath on June 3rd. Pre-order unique Japanese-inspired specialty drinks!",
@@ -22,10 +27,10 @@ export const metadata: Metadata = {
     siteName: "Lemme Pop-Up Café",
     images: [
       {
-        url: "/images/og-image.png", // Assuming you will add an og-image.png to public/images
-        width: 1200,
-        height: 630,
-        alt: "Lemme Pop-Up Café Banner",
+        url: "/images/lemmesquare.png", 
+        width: 1200, // You might want to adjust these if lemmesquare.png has different dimensions
+        height: 630, // Or provide an image with these dimensions for optimal OG display
+        alt: "Lemme Pop-Up Café Logo",
       },
     ],
     locale: "en_GB",
@@ -35,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lemme Pop-Up Café | Japanese-Inspired Drinks in Bath | June 3rd",
     description: "Discover Lemme, a one-day pop-up café in Bath on June 3rd. Pre-order unique Japanese-inspired specialty drinks!",
-    images: ["/images/og-image.png"], // Assuming you will add an og-image.png to public/images
+    images: ["/images/lemmesquare.png"], 
   },
   robots: {
     index: true,
@@ -47,6 +52,9 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+  },
+  verification: {
+    google: 'YOUR_GOOGLE_VERIFICATION_STRING', 
   },
 };
 
