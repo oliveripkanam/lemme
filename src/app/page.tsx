@@ -145,21 +145,41 @@ export default function AboutPage() {
         <AnimatedSection className="mb-16" delay={0.2}>
           {/* Title outside the card */}
           <h2 className="text-3xl font-bold text-[#1a3328] mb-6 text-center">Location & Time</h2>
-          <div className="bg-white/10 backdrop-filter backdrop-blur-sm p-6 rounded-xl shadow-lg">
-            <div className="flex flex-col sm:flex-row justify-around items-center sm:items-center gap-6 text-center sm:text-left">
-              {/* When Section */}
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-primary-dark mb-1">When</h3>
-                <p className="text-gray-800 text-lg">June 3rd, 2025</p>
-                <p className="text-gray-800 text-lg">10:00 AM - 4:00 PM</p>
+          <div className="bg-white/10 backdrop-filter backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
+            <div className="flex flex-col lg:flex-row min-h-[400px]">
+              {/* Left side: When and Where text (20%) */}
+              <div className="lg:w-1/5 w-full p-6 flex flex-col justify-center bg-white">
+                {/* When Section */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-primary-dark mb-2">When</h3>
+                  <p className="text-gray-800 text-base mb-1">June 3rd, 2025</p>
+                  <p className="text-gray-800 text-base">10:00 AM - 4:00 PM</p>
+                </div>
+                
+                {/* Separator */}
+                <div className="h-px bg-primary-dark/30 mb-6"></div>
+                
+                {/* Where Section */}
+                <div>
+                  <h3 className="text-lg font-semibold text-primary-dark mb-2">Where</h3>
+                  <p className="text-gray-800 text-base mb-1">22C New Bond Street, Bath, BA1 1BA</p>
+                  <p className="text-gray-800 text-sm">(30 seconds walk from Waitrose)</p>
+                </div>
               </div>
-              {/* Separator for medium screens and up - optional */}
-              <div className="hidden sm:block h-16 w-px bg-primary-dark/30"></div>
-              {/* Where Section */}
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-primary-dark mb-1">Where</h3>
-                <p className="text-gray-800 text-lg">22C New Bond Street, Bath, BA1 1BA</p>
-                <p className="text-gray-800 text-lg">(30 seconds walk from Waitrose)</p>
+              
+              {/* Right side: Google Maps (80%) */}
+              <div className="lg:w-4/5 w-full h-64 lg:h-auto">
+                <iframe
+                  src="https://maps.google.com/maps?q=22C+New+Bond+Street,+Bath,+BA1+1BA,+UK&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Lemme Cafe Location - 22C New Bond Street, Bath"
+                  className="w-full h-full"
+                ></iframe>
               </div>
             </div>
           </div>
