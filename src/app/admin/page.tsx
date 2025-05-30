@@ -148,12 +148,75 @@ export default function AdminPage() {
     const { orderId, currentStatus } = orderToConfirm;
 
     try {
-      const { error } = await supabase
-        .from("preorders")
-        .update({ is_collected: !currentStatus })
-        .eq("id", orderId);
+      if (!currentStatus) {
+        // If not collected yet, add to kitchen queue
+        const preorder = orders.find(order => order.id === orderId);
+        if (!preorder) {
+          throw new Error("Preorder not found");
+        }
 
-      if (error) throw error;
+        // Create live_orders entry
+        const { data: liveOrderData, error: liveOrderError } = await supabase
+          .from("live_orders")
+          .insert({
+            total_amount: preorder.total_price,
+            status: "pending",
+            customer_name: preorder.name
+          })
+          .select()
+          .single();
+
+        if (liveOrderError || !liveOrderData) {
+          throw liveOrderError || new Error("Failed to create live order");
+        }
+
+        // Create live_order_items entries
+        const liveOrderItems = preorder.drinks.map(drink => ({
+          live_order_id: liveOrderData.id,
+          drink_id: drink.drink_name.toLowerCase().replace(/\s+/g, ''), // Convert to ID format
+          drink_name: drink.drink_name,
+          quantity: drink.quantity,
+          customizations: {
+            hasOatMilk: drink.oat_milk || false,
+            syrups: {
+              caramel: drink.caramel_syrup || false,
+              vanilla: drink.vanilla_syrup || false
+            },
+            hasSemiSkimmedMilk: drink.semi_skimmed_milk || false,
+            isDecaf: drink.is_decaf || false,
+            isIced: false // Default for preorders
+          },
+          calculated_unit_price: drink.unit_price,
+          status: "pending"
+        }));
+
+        const { error: itemsError } = await supabase
+          .from("live_order_items")
+          .insert(liveOrderItems);
+
+        if (itemsError) {
+          // Cleanup: delete the live_orders entry if items failed
+          await supabase.from("live_orders").delete().eq("id", liveOrderData.id);
+          throw itemsError;
+        }
+
+        // Mark preorder as collected (processed)
+        const { error: updateError } = await supabase
+          .from("preorders")
+          .update({ is_collected: true })
+          .eq("id", orderId);
+
+        if (updateError) throw updateError;
+
+      } else {
+        // If already collected, just toggle back to pending (original behavior)
+        const { error } = await supabase
+          .from("preorders")
+          .update({ is_collected: !currentStatus })
+          .eq("id", orderId);
+
+        if (error) throw error;
+      }
 
       setOrders(prevOrders => 
         prevOrders.map(order => 
@@ -287,7 +350,7 @@ export default function AdminPage() {
                     className={`flex items-center justify-center px-4 py-2.5 rounded-lg font-medium transition-colors duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark ${showCollected ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                 >
                     {showCollected ? <EyeSlashIcon className="h-5 w-5 mr-2" /> : <EyeIcon className="h-5 w-5 mr-2" />}
-                    {showCollected ? "Hide Collected" : "Show Collected"}
+                    {showCollected ? "Hide In Kitchen" : "Show In Kitchen"}
                 </button>
             </div>
         </div>
@@ -379,7 +442,7 @@ export default function AdminPage() {
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-center">
                         {order.is_collected ? (
                             <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                                <CheckCircleIcon className="h-4 w-4 mr-1 text-green-600"/> Collected
+                                <CheckCircleIcon className="h-4 w-4 mr-1 text-green-600"/> In Kitchen
                             </span>
                         ) : (
                             <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
@@ -392,7 +455,7 @@ export default function AdminPage() {
                         onClick={() => triggerConfirmation(order.id, order.is_collected, order.name)}
                         className={`px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 ${order.is_collected ? 'bg-yellow-400 text-yellow-900 hover:bg-yellow-500 focus:ring-yellow-500' : 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-600'}`}
                       >
-                        {order.is_collected ? "Mark Pending" : "Mark Collected"}
+                        {order.is_collected ? "Mark Pending" : "Add to Kitchen"}
                       </button>
                     </td>
                   </motion.tr>
@@ -424,7 +487,7 @@ export default function AdminPage() {
                 Confirm Action
               </h3>
               <p className="text-gray-700 mb-6 sm:text-base text-sm">
-                Are you sure you want to {orderToConfirm.currentStatus ? "mark as Pending" : "mark as Collected"} for <span className="font-medium">{orderToConfirm.customerName}</span>?
+                Are you sure you want to {orderToConfirm.currentStatus ? "mark as Pending" : "add to Kitchen"} for <span className="font-medium">{orderToConfirm.customerName}</span>?
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <button
