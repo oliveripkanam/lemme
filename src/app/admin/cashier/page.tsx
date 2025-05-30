@@ -572,11 +572,41 @@ export default function CashierPage() {
                         // Radio buttons for other drinks
                         <>
                           <label className="flex items-center space-x-2 p-3 bg-slate-700 rounded-md cursor-pointer hover:bg-slate-600 transition-colors">
-                            <input type="radio" name="milk" checked={customizationItem.customizations.hasSemiSkimmedMilk && !customizationItem.customizations.hasOatMilk} onChange={() => {handleCustomizationChange('hasSemiSkimmedMilk'); handleCustomizationChange('hasOatMilk', false);}} className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"/>
+                            <input 
+                              type="radio" 
+                              name="milk" 
+                              checked={customizationItem.customizations.hasSemiSkimmedMilk && !customizationItem.customizations.hasOatMilk} 
+                              onChange={() => {
+                                setCustomizationItem({
+                                  ...customizationItem,
+                                  customizations: {
+                                    ...customizationItem.customizations,
+                                    hasSemiSkimmedMilk: true,
+                                    hasOatMilk: false
+                                  }
+                                });
+                              }} 
+                              className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"
+                            />
                             <span>Semi-Skimmed (Default)</span>
                           </label>
                           <label className="flex items-center space-x-2 p-3 bg-slate-700 rounded-md cursor-pointer hover:bg-slate-600 transition-colors">
-                            <input type="radio" name="milk" checked={customizationItem.customizations.hasOatMilk} onChange={() => {handleCustomizationChange('hasOatMilk'); handleCustomizationChange('hasSemiSkimmedMilk', false);}} className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"/>
+                            <input 
+                              type="radio" 
+                              name="milk" 
+                              checked={customizationItem.customizations.hasOatMilk} 
+                              onChange={() => {
+                                setCustomizationItem({
+                                  ...customizationItem,
+                                  customizations: {
+                                    ...customizationItem.customizations,
+                                    hasOatMilk: true,
+                                    hasSemiSkimmedMilk: false
+                                  }
+                                });
+                              }} 
+                              className="form-radio text-sky-500 focus:ring-sky-400 bg-slate-600 border-slate-500"
+                            />
                             <span>Oat Milk (+£{OAT_MILK_COST.toFixed(2)})</span>
                           </label>
                         </>
