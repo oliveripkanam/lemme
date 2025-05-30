@@ -507,7 +507,7 @@ export default function KitchenPage() {
                                   {item.customizations.hasOatMilk && <li>Oat Milk (+£{OAT_MILK_COST.toFixed(2)})</li>}
                                   {item.customizations.syrups.caramel && <li>Caramel Syrup (+£{SYRUP_COST.toFixed(2)})</li>}
                                   {item.customizations.syrups.vanilla && <li>Vanilla Syrup (+£{SYRUP_COST.toFixed(2)})</li>}
-                                  {!item.customizations.hasSemiSkimmedMilk && <li className={item.status === 'completed' ? 'line-through' : ''}>No Semi-Skimmed Milk</li>}
+                                  {!item.customizations.hasSemiSkimmedMilk && <li className={item.status === 'completed' ? 'line-through' : ''}>Semi-Skimmed Milk</li>}
                                   {item.customizations.isDecaf && <li className={item.status === 'completed' ? 'line-through' : ''}>Decaf</li>}
                                   {item.customizations.isIced && <li className={item.status === 'completed' ? 'line-through' : ''}>Iced</li>}
                                 </ul>
