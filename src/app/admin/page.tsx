@@ -155,16 +155,20 @@ export default function AdminPage() {
           throw new Error("Preorder not found");
         }
 
+        console.log("[Admin] Adding preorder to kitchen:", preorder);
+
         // Create live_orders entry
         const { data: liveOrderData, error: liveOrderError } = await supabase
           .from("live_orders")
           .insert({
             total_amount: preorder.total_price,
             status: "pending",
-            customer_name: preorder.name
+            customer_name: `[PREORDER:${preorder.id}] ${preorder.name}` // Store preorder ID in customer name with prefix
           })
           .select()
           .single();
+
+        console.log("[Admin] Live order creation result:", { liveOrderData, liveOrderError });
 
         if (liveOrderError || !liveOrderData) {
           throw liveOrderError || new Error("Failed to create live order");
@@ -173,7 +177,7 @@ export default function AdminPage() {
         // Create live_order_items entries
         const liveOrderItems = preorder.drinks.map(drink => ({
           live_order_id: liveOrderData.id,
-          drink_id: drink.drink_name.toLowerCase().replace(/\s+/g, ''), // Convert to ID format
+          drink_id: mapDrinkNameToDrinkId(drink.drink_name),
           drink_name: drink.drink_name,
           quantity: drink.quantity,
           customizations: {
@@ -190,9 +194,13 @@ export default function AdminPage() {
           status: "pending"
         }));
 
+        console.log("[Admin] Live order items to insert:", liveOrderItems);
+
         const { error: itemsError } = await supabase
           .from("live_order_items")
           .insert(liveOrderItems);
+
+        console.log("[Admin] Live order items insertion result:", { itemsError });
 
         if (itemsError) {
           // Cleanup: delete the live_orders entry if items failed
@@ -208,14 +216,66 @@ export default function AdminPage() {
 
         if (updateError) throw updateError;
 
+        console.log("[Admin] Preorder successfully added to kitchen queue");
+
       } else {
-        // If already collected, just toggle back to pending (original behavior)
+        // If already collected (in kitchen), revert back to pending and remove from kitchen
+        const preorder = orders.find(order => order.id === orderId);
+        if (!preorder) {
+          throw new Error("Preorder not found");
+        }
+
+        console.log("[Admin] Reverting preorder from kitchen back to pending:", preorder);
+
+        // Find the associated live order that was created for this preorder
+        const { data: liveOrderData, error: liveOrderFetchError } = await supabase
+          .from("live_orders")
+          .select("id, customer_name")
+          .like("customer_name", `[PREORDER:${orderId}]%`)
+          .single();
+
+        if (liveOrderFetchError) {
+          console.log("[Admin] No associated live order found:", liveOrderFetchError);
+          // Continue anyway - maybe the live order was already processed
+        }
+
+        if (liveOrderData) {
+          console.log("[Admin] Found associated live order to remove:", liveOrderData.id);
+          
+          // Delete the live order items first
+          const { error: itemsDeleteError } = await supabase
+            .from("live_order_items")
+            .delete()
+            .eq("live_order_id", liveOrderData.id);
+
+          if (itemsDeleteError) {
+            console.error("[Admin] Error deleting live order items:", itemsDeleteError);
+            throw itemsDeleteError;
+          }
+
+          // Delete the live order
+          const { error: orderDeleteError } = await supabase
+            .from("live_orders")
+            .delete()
+            .eq("id", liveOrderData.id);
+
+          if (orderDeleteError) {
+            console.error("[Admin] Error deleting live order:", orderDeleteError);
+            throw orderDeleteError;
+          }
+
+          console.log("[Admin] Successfully removed live order from kitchen");
+        }
+
+        // Revert preorder status back to pending
         const { error } = await supabase
           .from("preorders")
-          .update({ is_collected: !currentStatus })
+          .update({ is_collected: false })
           .eq("id", orderId);
 
         if (error) throw error;
+
+        console.log("[Admin] Successfully reverted preorder to pending and removed from kitchen");
       }
 
       setOrders(prevOrders => 
@@ -236,6 +296,35 @@ export default function AdminPage() {
   const handleCancelStatusChange = () => {
     setShowConfirmModal(false);
     setOrderToConfirm(null);
+  };
+
+  // Helper function to map preorder drink names to live order drink IDs
+  const mapDrinkNameToDrinkId = (drinkName: string): string => {
+    const nameToIdMap: Record<string, string> = {
+      // Hot Coffee
+      "Espresso": "espresso",
+      "Macchiato": "macchiato", 
+      "Americano": "americano",
+      "Cortado": "cortado",
+      "Flat White": "flatWhite",
+      "Latte": "latte",
+      "Cappuccino": "cappuccino",
+      // Iced Coffee
+      "Iced Latte": "icedLatte",
+      "Iced Americano": "icedAmericano",
+      // Specialty Drinks
+      "Matcha (Hot)": "matchaHot",
+      "Matcha (Iced)": "matchaIced",
+      "Hojicha (Hot)": "hojichaHot", 
+      "Hojicha (Iced)": "hojichaIced",
+      "Hong Kong Style Iced Lemon Tea": "hkIcedLemonTea",
+      "Yuzu Tea (Hot)": "yuzuTeaHot",
+      "Yuzu Tea (Iced)": "yuzuTeaIced",
+      "Genmaicha (Hot)": "genmaichaHot",
+      "Genmaicha (Iced)": "genmaichaIced"
+    };
+    
+    return nameToIdMap[drinkName] || drinkName.toLowerCase().replace(/\s+/g, '');
   };
 
   if (!isAuthenticated) {

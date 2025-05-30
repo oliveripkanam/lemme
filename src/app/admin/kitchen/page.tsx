@@ -231,10 +231,77 @@ export default function KitchenPage() {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
+  const formatCustomerName = (customerName: string) => {
+    // Check if this is a preorder (has [PREORDER:uuid] prefix)
+    const match = customerName.match(/^\[PREORDER:([^\]]+)\]\s*(.+)$/);
+    if (match) {
+      const actualName = match[2].trim();
+      return `(Pre-order) ${actualName}`;
+    }
+    return customerName;
+  };
+
   const handleToggleOrderItemStatus = async (orderId: string, itemId: string, currentStatus: "pending" | "completed") => {
     setUpdatingItemId(itemId);
     const newStatus = currentStatus === "completed" ? "pending" : "completed";
+    
     try {
+      // Check if this is a preorder being marked back to pending from completed
+      const orderData = pendingOrders.find(order => order.live_order_id === orderId);
+      const isPreorderReversion = orderData && 
+        currentStatus === "completed" && 
+        newStatus === "pending" && 
+        orderData.customer_name.startsWith("[PREORDER:");
+
+      if (isPreorderReversion) {
+        // Extract preorder ID from customer name
+        const match = orderData.customer_name.match(/^\[PREORDER:([^\]]+)\]/);
+        if (match) {
+          const preorderId = match[1];
+          console.log("[Kitchen] Reverting preorder to admin page:", preorderId);
+
+          // Revert the preorder status
+          const { error: preorderError } = await supabase
+            .from("preorders")
+            .update({ is_collected: false })
+            .eq("id", preorderId);
+
+          if (preorderError) {
+            console.error("[Kitchen] Error reverting preorder:", preorderError);
+            throw preorderError;
+          }
+
+          // Delete all live order items for this order
+          const { error: itemsDeleteError } = await supabase
+            .from("live_order_items")
+            .delete()
+            .eq("live_order_id", orderId);
+
+          if (itemsDeleteError) {
+            console.error("[Kitchen] Error deleting live order items:", itemsDeleteError);
+            throw itemsDeleteError;
+          }
+
+          // Delete the live order
+          const { error: orderDeleteError } = await supabase
+            .from("live_orders")
+            .delete()
+            .eq("id", orderId);
+
+          if (orderDeleteError) {
+            console.error("[Kitchen] Error deleting live order:", orderDeleteError);
+            throw orderDeleteError;
+          }
+
+          console.log("[Kitchen] Successfully reverted preorder and removed from kitchen");
+          
+          // Remove the order from local state immediately
+          setPendingOrders(prevOrders => prevOrders.filter(order => order.live_order_id !== orderId));
+          return; // Exit early, don't do the normal status update
+        }
+      }
+
+      // Normal status update for non-preorder reversions
       const { error: updateError } = await supabase
         .from("live_order_items")
         .update({ status: newStatus })
@@ -255,8 +322,6 @@ export default function KitchenPage() {
           };
         }
         return order;
-      // No longer filtering out orders here, as an item marked back to pending should keep the order visible if it was already visible.
-      // Filtering for parent order status happens in groupAndFilterOrders.
       })); 
       
       console.log(`Item ${itemId} status changed to ${newStatus}.`);
@@ -391,7 +456,7 @@ export default function KitchenPage() {
               >
                 <div>
                   <h2 className="text-xl sm:text-2xl font-semibold text-yellow-500">
-                    Order for: <span className="text-yellow-300">{order.customer_name}</span>
+                    Order for: <span className="text-yellow-300">{formatCustomerName(order.customer_name)}</span>
                   </h2>
                   <p className="text-xs text-gray-400 flex items-center mt-1">
                     <ClockIcon className="h-4 w-4 mr-1.5 text-gray-500"/>

@@ -165,33 +165,97 @@ export default function OrderArchivePage() {
     setUpdatingOrderId(orderId);
     setError(null);
     try {
-      // Update all items in the order to 'pending'
-      const { error: itemsError } = await supabase
-        .from("live_order_items")
-        .update({ status: "pending" })
-        .eq("live_order_id", orderId);
-
-      if (itemsError) throw itemsError;
-
-      // Update the parent order to 'pending'
-      const { error: orderError } = await supabase
+      // First, get the live order to check if it has an associated preorder
+      const { data: liveOrderData, error: fetchError } = await supabase
         .from("live_orders")
-        .update({ status: "pending" })
-        .eq("id", orderId);
+        .select("customer_name")
+        .eq("id", orderId)
+        .single();
 
-      if (orderError) throw orderError;
+      if (fetchError) {
+        console.log("[Archive] Error fetching live order:", fetchError);
+        // Continue anyway - not all live orders come from preorders
+      }
 
-      // Refetch orders to update the UI (or locally remove the order from this list)
-      // For simplicity, refetching based on current filter.
-      // If current filter is 'completed', this order will disappear.
-      // If somehow current filter was 'pending', it would appear.
+      // Extract preorder ID from customer name if it's a preorder
+      let preorderId = null;
+      const isPreorder = liveOrderData?.customer_name?.startsWith("[PREORDER:");
+      if (liveOrderData?.customer_name && isPreorder) {
+        const match = liveOrderData.customer_name.match(/^\[PREORDER:([^\]]+)\]/);
+        if (match) {
+          preorderId = match[1];
+          console.log("[Archive] Found preorder ID:", preorderId);
+        }
+      }
+
+      if (isPreorder && preorderId) {
+        // For preorders: revert preorder status and delete live order entirely
+        console.log("[Archive] Reverting preorder and removing from live orders:", preorderId);
+        
+        // Revert the preorder status
+        const { error: preorderError } = await supabase
+          .from("preorders")
+          .update({ is_collected: false })
+          .eq("id", preorderId);
+
+        if (preorderError) {
+          console.error("[Archive] Error reverting preorder:", preorderError);
+          throw preorderError;
+        }
+
+        // Delete all live order items first
+        const { error: itemsDeleteError } = await supabase
+          .from("live_order_items")
+          .delete()
+          .eq("live_order_id", orderId);
+
+        if (itemsDeleteError) {
+          console.error("[Archive] Error deleting live order items:", itemsDeleteError);
+          throw itemsDeleteError;
+        }
+
+        // Delete the live order
+        const { error: orderDeleteError } = await supabase
+          .from("live_orders")
+          .delete()
+          .eq("id", orderId);
+
+        if (orderDeleteError) {
+          console.error("[Archive] Error deleting live order:", orderDeleteError);
+          throw orderDeleteError;
+        }
+
+        console.log("[Archive] Successfully reverted preorder to admin page");
+        
+      } else {
+        // For regular live orders: normal pending behavior
+        console.log("[Archive] Marking regular live order as pending:", orderId);
+        
+        // Update all items in the order to 'pending'
+        const { error: itemsError } = await supabase
+          .from("live_order_items")
+          .update({ status: "pending" })
+          .eq("live_order_id", orderId);
+
+        if (itemsError) throw itemsError;
+
+        // Update the parent order to 'pending'
+        const { error: orderError } = await supabase
+          .from("live_orders")
+          .update({ status: "pending" })
+          .eq("id", orderId);
+
+        if (orderError) throw orderError;
+      }
+
+      // Refetch orders to update the UI
       fetchOrders(filterStatus);
-      console.log(`[Archive] Order ${orderId} marked back to pending.`);
+      console.log(`[Archive] Order ${orderId} processed successfully.`);
 
     } catch (err: unknown) {
-      console.error(`[Archive] Error marking order ${orderId} as pending:`, err);
+      console.error(`[Archive] Error processing order ${orderId}:`, err);
       const message = err instanceof Error ? err.message : "An unknown error occurred";
-      setError(`Failed to revert order ${orderId}: ${message}`);
+      setError(`Failed to process order ${orderId}: ${message}`);
     } finally {
       setUpdatingOrderId(null);
     }
