@@ -118,7 +118,15 @@ export default function PreorderPage() {
   };
 
   const openCustomizationModal = (drink: BaseDrink) => {
-    setModalData({ drink, oatMilk: false, hasCaramelSyrup: false, hasVanillaSyrup: false, hasSemiSkimmedMilk: false, isDecaf: false, quantity: 1 });
+    setModalData({ 
+      drink, 
+      oatMilk: false, 
+      hasCaramelSyrup: false, 
+      hasVanillaSyrup: false, 
+      hasSemiSkimmedMilk: false, // Nothing selected by default
+      isDecaf: false, 
+      quantity: 1 
+    });
     setShowCustomizationModal(true);
   };
 
@@ -148,12 +156,18 @@ export default function PreorderPage() {
   const addSimpleItemToCart = (drink: BaseDrink) => {
     const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', false, false, false, drink.name);
 
+    // Determine default milk setting - most drinks default to semi-skimmed except Americanos and certain specialty teas
+    const noMilkDrinks = ['espresso', 'americano', 'icedAmericano', 'hkIcedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
+    const defaultSemiSkimmed = !noMilkDrinks.includes(drink.id);
+    
+    console.log("[Preorder] Drink ID:", drink.id, "defaultSemiSkimmed:", defaultSemiSkimmed, "noMilkDrinks includes:", noMilkDrinks.includes(drink.id));
+
     const existingItemIndex = cartItems.findIndex(item => 
       item.baseDrinkId === drink.id &&
       !item.hasOatMilk &&
       !item.hasCaramelSyrup &&
       !item.hasVanillaSyrup &&
-      !item.hasSemiSkimmedMilk &&
+      item.hasSemiSkimmedMilk === defaultSemiSkimmed &&
       !item.isDecaf
     );
 
@@ -169,13 +183,14 @@ export default function PreorderPage() {
         hasOatMilk: false,
         hasCaramelSyrup: false,
         hasVanillaSyrup: false,
-        hasSemiSkimmedMilk: false,
+        hasSemiSkimmedMilk: defaultSemiSkimmed,
         isDecaf: false,
         quantity: 1,
         unitPrice: unitPrice,
         originalBasePrice: drink.price,
         isSpecialty: drink.category === 'specialtyDrinks'
       };
+      console.log("[Preorder] Created cart item:", newItem);
       setCartItems(prevCart => [...prevCart, newItem]);
     }
   };
@@ -184,6 +199,14 @@ export default function PreorderPage() {
     if (!modalData) return;
 
     const { drink, oatMilk, hasCaramelSyrup, hasVanillaSyrup, hasSemiSkimmedMilk, isDecaf, quantity } = modalData;
+    
+    // If no milk option is selected, default to semi-skimmed for appropriate drinks
+    const noMilkDrinks = ['espresso', 'americano', 'icedAmericano', 'hkIcedLemonTea', 'yuzuTeaHot', 'yuzuTeaIced', 'genmaichaHot', 'genmaichaIced'];
+    const shouldDefaultToSemiSkimmed = !noMilkDrinks.includes(drink.id);
+    const finalHasSemiSkimmedMilk = !oatMilk && !hasSemiSkimmedMilk && shouldDefaultToSemiSkimmed ? true : hasSemiSkimmedMilk;
+    
+    console.log("[Preorder] Modal data - oatMilk:", oatMilk, "hasSemiSkimmedMilk:", hasSemiSkimmedMilk, "finalHasSemiSkimmedMilk:", finalHasSemiSkimmedMilk);
+    
     const unitPrice = calculateUnitPrice(drink.price, drink.category === 'specialtyDrinks', oatMilk, hasCaramelSyrup, hasVanillaSyrup, drink.name);
     
     const existingItemIndex = cartItems.findIndex(item => 
@@ -191,7 +214,7 @@ export default function PreorderPage() {
       item.hasOatMilk === oatMilk &&
       item.hasCaramelSyrup === hasCaramelSyrup &&
       item.hasVanillaSyrup === hasVanillaSyrup &&
-      item.hasSemiSkimmedMilk === hasSemiSkimmedMilk &&
+      item.hasSemiSkimmedMilk === finalHasSemiSkimmedMilk &&
       item.isDecaf === isDecaf
     );
 
@@ -207,13 +230,14 @@ export default function PreorderPage() {
         hasOatMilk: oatMilk,
         hasCaramelSyrup: hasCaramelSyrup,
         hasVanillaSyrup: hasVanillaSyrup,
-        hasSemiSkimmedMilk: hasSemiSkimmedMilk,
+        hasSemiSkimmedMilk: finalHasSemiSkimmedMilk,
         isDecaf: isDecaf,
         quantity: quantity,
         unitPrice: unitPrice,
         originalBasePrice: drink.price,
         isSpecialty: drink.category === 'specialtyDrinks'
       };
+      console.log("[Preorder] Created cart item:", newItem);
       setCartItems([...cartItems, newItem]);
     }
     setShowCustomizationModal(false);
@@ -277,6 +301,8 @@ export default function PreorderPage() {
       is_collected: false, // Default value
     };
     
+    console.log("[Preorder] Order data for Supabase:", orderDataForSupabase);
+
     try {
       const { error } = await supabase
         .from('preorders')
