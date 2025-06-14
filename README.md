@@ -1,6 +1,5 @@
-
 <div align="center">
-  <img src="lemme.png" alt="Lemme Cafe Logo" width="300"/>
+  <img src="public/images/lemme.png" alt="Lemme Cafe Logo" width="300"/>
 </div>
 
 # Lemme - One Day Cafe Pop-Up
@@ -18,6 +17,6 @@ This site provides information about our menu, allows you to pre-order your favo
 ## Connect With Us
 
 Follow us on Instagram for updates and sneak peeks!
-[<img src="https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white" alt="Instagram Badge" height="30">](https://www.instagram.com/_lemme.sip_/#)
+[<img src="https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white" alt="Instagram Badge" height="30">](https://www.instagram.com/_lemme.sip_/)
 
 We look forward to seeing you there!
