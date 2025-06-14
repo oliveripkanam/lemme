@@ -1,4 +1,4 @@
-\
+
 <div align="center">
   <img src="lemme.png" alt="Lemme Cafe Logo" width="300"/>
 </div>
